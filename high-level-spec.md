@@ -26,9 +26,11 @@ For the POC, this will be a standalone node project that exposes an Angular fron
     - When projects are shown in the UI, it will explode the camel-case to spaces and capitalize the first letter of each word
     - Each project directory will have a "files" subdirectory where the user can upload documents about the architecture, coding conventions, etc.  
     - Each project will have a "techstack.txt" file that contains the tech stack details for the project, with one tech stack element per line.
+    - When a project is deleted the directory is renamed to add a '.deleted' extension, it is not deleted from the disk
 
 - Main UI:
     - The main UI will have a sortable & searchable tile view of projects
+    - Deleted projects will not be shown in the list
     - There will be a settings icon that allows the user to edit their OpenAPI endpoint and API key
     - There is be a "+" icon to add a new project
     - By default, projects are be ordered by creation time with the most recent being first, but they can resort it alphabetically
