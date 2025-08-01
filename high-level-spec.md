@@ -3,7 +3,7 @@
 ## Overview
 The purpose of the Vibe Coding Accelerator is to help users quickly create custom instructions for their specific AI Coding tool, adhere to best practices, and specific development environment requirements.
 
-For the POC, this will be a standalone node project that exposes an Angular frontend
+For the POC, this will be a standalone node project that exposes an Angular frontend.
  - Users will checkout the project from git and run it locally, so no need for a login or authentication.
  - Since this will require an LLM, we'll need to prompt the user for an OpenAPI endpoint and an optional API key.  
     - This should be stored in their .env file
@@ -44,6 +44,7 @@ For the POC, this will be a standalone node project that exposes an Angular fron
     - There will be a tech stack section:
         - It has an autocomplete field that shows known tech stack elements that can be added.  
         - When added that tech stack item should show up as a chip in the tech stack section with an "x" that the user can click to remove.
+    - If the project has been procesed by the LLM, it should display the completeness score
     - There will be a documents section:
         - For the documents section, we want users to be able to drag and drop files into the documents area for each upload.
         - There will be an add file button that allows the user to add one or more files at a time.
@@ -56,3 +57,4 @@ For the POC, this will be a standalone node project that exposes an Angular fron
     - Each AI Agent file is submitted to the LLM along with the documents with instructions to:
         - For this file, look at the documents and add items that are missing, remove or update items that conflict so that the instructions in this file adhere to the guidelines provided.
     - After all of the files have been processed, the "export" directory is zipped, and provided as a download through the UI as a link.
+    - In addition to the zip file a traceability report should be generated that shows the various apects of the tech stack and rules and help the user identify potentially missing guidelines.  Missing documents will impact the completeness score for the project.  A project that has all related guidelines will have a completeness score of 100.
