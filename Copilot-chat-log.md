@@ -276,8 +276,10 @@ All requested files have been created:
 
 Let me know if you need further breakdowns, additional diagrams, or want to proceed to implementation planning.
 
-```Me: Follow instructions in task-generation.prompt.md.
-proceed with generating all tasks in logical order starting with scaffolding the project. each task should be dependent on the prior tasks and progressively add features and functionality.```
+```
+Me: Follow instructions in task-generation.prompt.md.
+proceed with generating all tasks in logical order starting with scaffolding the project. each task should be dependent on the prior tasks and progressively add features and functionality.
+```
 
 **Copilot:**
 
@@ -295,8 +297,10 @@ All implementation tasks have been generated in logical, dependency order, start
 
 Let me know if you need further breakdowns, want to insert additional tasks, or are ready to proceed to implementation.
 
-```Me: Follow instructions in task-execution.prompt.md.
-execute this task. when complete, check off what's been completed in the task file. then review any linked PRDs and User Stories. update the user story to mark items as complete. note that user stories may be broken up across multiple tasks, so only mark as items as complete when all required tasks are complete```
+```
+Me: Follow instructions in task-execution.prompt.md.
+execute this task. when complete, check off what's been completed in the task file. then review any linked PRDs and User Stories. update the user story to mark items as complete. note that user stories may be broken up across multiple tasks, so only mark as items as complete when all required tasks are complete
+```
 
 **Copilot:**
 
@@ -327,3 +331,42 @@ Should I proceed? (yes/y to continue)
 
 **Copilot:**
 
+```npm init -y```
+
+```npx -y @angular/cli@latest new src --directory src --skip-git --skip-install --routing --style=scss```
+
+```npm install --prefix src/```
+
+```npm run build --prefix src/```
+
+```
+git add . && git commit -m "Implement Task 0001: Project Scaffolding
+
+- Initialize all required directories and baseline files
+- Add placeholder files for empty directories
+- Add README, .gitignore, .env.example
+- Scaffold Angular app in src/
+- Reference: SRD section 2, 3
+- Related PRD: Project Management - Create Project
+
+Closes: 0001-project-scaffolding.md"
+```
+
+Task 0001: Project Scaffolding is complete.
+- All required directories (src, projects, ai_agents, product-requirements, architecture-decisions, system-requirements, tasks) have been created.
+- Baseline README.md, .gitignore, and .env.example files are present.
+- All initial documentation directories and placeholder files are in place.
+- Angular app is scaffolded in src and builds with no errors (empty shell).
+- All changes have been committed with proper traceability.
+
+Acceptance criteria in the task file have been checked off.
+
+Next step: Review the Project Management PRD user story for "Create Project." Since this user story spans multiple tasks (including backend and UI implementation), only the scaffolding portion is now complete. The user story will be fully marked complete after all related tasks (project CRUD APIs, UI, etc.) are finished.
+
+Recommend proceeding to Task 0002: Initialize Angular Frontend. Would you like to continue?
+
+```Me: y```
+
+**Copilot:**
+
+```npm run start --prefix src/```
