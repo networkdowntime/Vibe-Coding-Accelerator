@@ -10,11 +10,11 @@
 Set up the Angular frontend application with the required configuration and initial routing.
 
 ## Acceptance Criteria
-- [ ] Angular app is created in `src/` using Angular CLI
-- [ ] App runs locally in development mode
-- [ ] Routing is configured for main UI and project view/edit page
-- [ ] Placeholder components for main UI and project view/edit are present
-- [ ] App uses desktop-optimized layout
+- [x] Angular app is created in `src/` using Angular CLI
+- [x] App runs locally in development mode
+- [x] Routing is configured for main UI and project view/edit page
+- [x] Placeholder components for main UI and project view/edit are present
+- [x] App uses desktop-optimized layout
 
 ## Technical Requirements
 ### Implementation Details

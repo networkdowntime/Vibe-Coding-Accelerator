@@ -370,3 +370,52 @@ Recommend proceeding to Task 0002: Initialize Angular Frontend. Would you like t
 **Copilot:**
 
 ```npm run start --prefix src/```
+
+```
+git add . && git commit -m "Implement Task 0002: Initialize Angular Frontend
+
+- Configure Angular routing for main UI and project view/edit page
+- Add placeholder components for main UI and project view/edit
+- Ensure app runs in development mode
+- Reference: SRD section 2, 3
+- Related PRD: Project Management - Main UI, Project Tile UI
+
+Closes: 0002-initialize-angular-frontend.md"
+```
+
+Task 0002: Initialize Angular Frontend is complete.
+
+What was done:
+- Angular app in src is confirmed present and runs in development mode.
+- Routing is configured for / (main UI) and /project/:id (project view/edit).
+- Placeholder components for main UI and project view/edit are implemented with desktop-optimized layout.
+- All changes committed with traceability to SRD and PRD.
+
+Task file: All acceptance criteria are checked off.
+
+PRD review:
+- User stories for "Create Project" and "View Projects" are not fully complete yet (UI tiles, CRUD, etc. are future tasks).
+- This task covers the foundational UI and routing only; further tasks will complete the user stories.
+
+Ready to proceed to the next implementation task. Let me know if you want to continue.
+
+```Me: y```
+
+**Copilot:**
+
+```npm install --prefix src/backend/```
+
+```npm run start --prefix src/backend/```
+
+```
+git add . && git commit -m "Implement Task 0003: Initialize Node.js Backend
+
+- Scaffold backend in src/backend with Express and CORS
+- Add API endpoints for project CRUD and file management (scaffold only)
+- Implement placeholder controllers and routes
+- Backend server runs and is accessible
+- Reference: SRD section 2, 3
+- Related PRD: Project Management - Project CRUD, File Management
+
+Closes: 0003-initialize-node-backend.md"
+```
