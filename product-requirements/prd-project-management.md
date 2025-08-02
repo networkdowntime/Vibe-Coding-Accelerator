@@ -18,15 +18,15 @@ This PRD covers all requirements for project creation, viewing, editing, renamin
 **So that** I can manage AI Agent configurations for my work
 
 #### Acceptance Criteria
-- [ ] User can create a project by entering a name
-- [ ] Duplicate project names (case-insensitive, camel-case) are not allowed
-- [ ] Project directory is created in `./projects` using lowercase camel case
+- [x] User can create a project by entering a name (API/backend)
+- [x] Duplicate project names (case-insensitive, camel-case) are not allowed (API/backend)
+- [x] Project directory is created in `./projects` using lowercase camel case (API/backend)
 - [ ] Project appears as a tile in the main UI
 - [ ] Project creation is confirmed via modal
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
+- [x] Code implemented (API/backend)
+- [x] Unit tests written (API/backend)
 - [ ] Integration tests passing
 - [ ] Documentation updated
 - [ ] Security review completed
@@ -60,15 +60,15 @@ This PRD covers all requirements for project creation, viewing, editing, renamin
 **So that** I can keep my project names accurate and meaningful
 
 #### Acceptance Criteria
-- [ ] User can rename a project from the project view/edit page
-- [ ] If the new name collides with an existing project, user is warned and rename is prevented
-- [ ] Project directory is renamed accordingly
+- [x] User can rename a project (API/backend)
+- [x] If the new name collides with an existing project, user is warned and rename is prevented (API/backend)
+- [x] Project directory is renamed accordingly (API/backend)
 - [ ] All references and UI elements update to reflect the new name
 - [ ] Rename is confirmed via modal
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
+- [x] Code implemented (API/backend)
+- [x] Unit tests written (API/backend)
 - [ ] Integration tests passing
 - [ ] Documentation updated
 - [ ] Security review completed
@@ -81,15 +81,16 @@ This PRD covers all requirements for project creation, viewing, editing, renamin
 **So that** I can remove projects I no longer need
 
 #### Acceptance Criteria
+- [x] User can delete a project (API/backend)
+- [x] Project directory is renamed to add `.deleted` extension (not removed from disk) (API/backend)
 - [ ] User can delete a project from the main UI or project view/edit page
 - [ ] Deletion requires confirmation via modal
-- [ ] Project directory is renamed to add `.deleted` extension (not removed from disk)
 - [ ] Deleted project is immediately removed from the UI
 - [ ] User is redirected to the main page if deleting from the project view/edit page
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
+- [x] Code implemented (API/backend)
+- [x] Unit tests written (API/backend)
 - [ ] Integration tests passing
 - [ ] Documentation updated
 - [ ] Security review completed

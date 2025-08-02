@@ -17,5 +17,12 @@
   "bugs": {
     "url": "https://github.com/networkdowntime/Vibe-Coding-Accelerator/issues"
   },
-  "homepage": "https://github.com/networkdowntime/Vibe-Coding-Accelerator#readme"
+  "homepage": "https://github.com/networkdowntime/Vibe-Coding-Accelerator#readme",
+  "devDependencies": {
+    "jest": "^30.0.5",
+    "supertest": "^7.1.4"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }

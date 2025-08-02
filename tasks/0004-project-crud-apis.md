@@ -10,12 +10,12 @@
 Implement REST API endpoints for creating, viewing, renaming, and deleting projects, with all operations reflected in the local filesystem.
 
 ## Acceptance Criteria
-- [ ] API endpoints for create, list, rename, and delete project
-- [ ] Duplicate project names (case-insensitive, camel-case) are prevented
-- [ ] Project directories are created/renamed/deleted on disk as specified
-- [ ] Deleted projects are renamed with `.deleted` extension
-- [ ] All operations return appropriate status and error messages
-- [ ] Unit tests for all endpoints
+- [x] API endpoints for create, list, rename, and delete project
+- [x] Duplicate project names (case-insensitive, camel-case) are prevented
+- [x] Project directories are created/renamed/deleted on disk as specified
+- [x] Deleted projects are renamed with `.deleted` extension
+- [x] All operations return appropriate status and error messages
+- [x] Unit tests for all endpoints
 
 ## Technical Requirements
 ### Implementation Details
