@@ -1,0 +1,14 @@
+{
+  "testEnvironment": "node",
+  "transform": {},
+  "roots": ["<rootDir>/tests"],
+  "testMatch": ["**/*.test.js"],
+  "collectCoverageFrom": [
+    "controllers/**/*.js",
+    "utils/**/*.js",
+    "!**/*.test.js"
+  ],
+  "coverageDirectory": "coverage",
+  "testTimeout": 10000,
+  "verbose": true
+}

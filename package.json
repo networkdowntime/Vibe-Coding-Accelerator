@@ -1,0 +1,70 @@
+{
+  "name": "vibe-coding-accelerator",
+  "version": "1.0.0",
+  "description": "A comprehensive web-based platform that accelerates software development through AI-powered assistance",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd src/backend && npm run dev",
+    "dev:frontend": "cd src/frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd src/backend && npm run build",
+    "build:frontend": "cd src/frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd src/backend && npm test",
+    "test:frontend": "cd src/frontend && npm test",
+    "test:coverage": "npm run test:coverage:backend && npm run test:coverage:frontend",
+    "test:coverage:backend": "cd src/backend && npm run test:coverage",
+    "test:coverage:frontend": "cd src/frontend && npm run test:coverage",
+    "test:e2e": "cd src/frontend && npm run e2e",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd src/backend && npm run lint",
+    "lint:frontend": "cd src/frontend && npm run lint",
+    "format": "prettier --write .",
+    "prepare": "husky install",
+    "postinstall": "npm run install:backend && npm run install:frontend",
+    "install:backend": "cd src/backend && npm install",
+    "install:frontend": "cd src/frontend && npm install"
+  },
+  "keywords": [
+    "ai",
+    "development",
+    "automation",
+    "coding",
+    "accelerator",
+    "llm",
+    "documentation",
+    "project-management"
+  ],
+  "author": "Vibe Coding Accelerator Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/networkdowntime/Vibe-Coding-Accelerator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/networkdowntime/Vibe-Coding-Accelerator/issues"
+  },
+  "homepage": "https://github.com/networkdowntime/Vibe-Coding-Accelerator#readme",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "concurrently": "^8.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,json,md}": [
+      "prettier --write"
+    ],
+    "*.{js,ts}": [
+      "eslint --fix"
+    ]
+  }
+}
