@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ProjectService, Project } from '../../services/project.service';
 import { ProjectModalComponent, ProjectModalData, ProjectModalResult } from '../project-modal/project-modal.component';
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProjectModalComponent],
+  imports: [CommonModule, FormsModule, RouterModule, ProjectModalComponent],
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.scss'
 })

@@ -1,4 +1,12 @@
 <div class="project-list-container">
+  <!-- Header with Settings Icon -->
+  <div class="page-header">
+    <h1>Projects</h1>
+    <a [routerLink]="['/settings']" [queryParams]="{ returnUrl: '/' }" class="settings-icon" title="Settings">
+      <i class="fas fa-cog"></i>
+    </a>
+  </div>
+
   <!-- Search and Sort Controls -->
   <div class="controls-section">
     <div class="search-sort-controls">

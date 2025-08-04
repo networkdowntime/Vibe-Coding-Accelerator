@@ -139,17 +139,25 @@ describe('SettingsComponent', () => {
       expect(component.feedbackMessage).toBe('Endpoint is required');
     });
 
-    it('should show error for empty API key', () => {
+    it('should save settings with empty API key (optional)', () => {
       component.formData = {
         endpoint: 'https://test-endpoint.com',
         apiKey: ''
       };
 
+      const mockResponse = { 
+        message: 'Settings updated successfully',
+        settings: { endpoint: 'https://test-endpoint.com', hasApiKey: false }
+      };
+      settingsService.updateOpenApiSettings.and.returnValue(of(mockResponse));
+
       component.saveSettings();
 
-      expect(component.isFeedbackModalOpen).toBe(true);
-      expect(component.feedbackType).toBe('error');
-      expect(component.feedbackMessage).toBe('API key is required');
+      expect(settingsService.updateOpenApiSettings).toHaveBeenCalledWith({
+        endpoint: 'https://test-endpoint.com',
+        apiKey: ''
+      });
+      expect(component.isLoading).toBe(false);
     });
 
     it('should handle save errors', () => {

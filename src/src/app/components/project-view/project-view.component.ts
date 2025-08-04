@@ -77,4 +77,20 @@ export class ProjectViewComponent implements OnInit {
       this.errorMessage = '';
     }, 5000);
   }
+
+  /**
+   * Edit project name
+   */
+  editProjectName(): void {
+    // TODO: Implement project name editing functionality
+    console.log('Edit project name clicked');
+  }
+
+  /**
+   * Delete project
+   */
+  deleteProject(): void {
+    // TODO: Implement project deletion functionality with confirmation
+    console.log('Delete project clicked');
+  }
 }

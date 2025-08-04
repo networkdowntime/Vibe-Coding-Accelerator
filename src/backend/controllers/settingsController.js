@@ -100,10 +100,6 @@ const updateOpenApiSettings = async (req, res) => {
       return res.status(400).json({ error: 'OpenAPI endpoint is required' });
     }
     
-    if (!apiKey || !apiKey.trim()) {
-      return res.status(400).json({ error: 'API key is required' });
-    }
-    
     // Validate URL format
     try {
       new URL(endpoint);
@@ -113,9 +109,13 @@ const updateOpenApiSettings = async (req, res) => {
     
     // Update .env file
     const envUpdates = {
-      OPENAPI_ENDPOINT: endpoint.trim(),
-      OPENAPI_API_KEY: apiKey.trim()
+      OPENAPI_ENDPOINT: endpoint.trim()
     };
+    
+    // Only set API key if provided
+    if (apiKey && apiKey.trim()) {
+      envUpdates.OPENAPI_API_KEY = apiKey.trim();
+    }
     
     await writeEnvFile(envUpdates);
     
@@ -123,7 +123,7 @@ const updateOpenApiSettings = async (req, res) => {
       message: 'OpenAPI settings updated successfully',
       settings: {
         endpoint: endpoint.trim(),
-        hasApiKey: true,
+        hasApiKey: !!(apiKey && apiKey.trim()),
         isConfigured: true
       }
     });
@@ -140,30 +140,38 @@ const testOpenApiConnection = async (req, res) => {
     const endpoint = envVars.OPENAPI_ENDPOINT;
     const apiKey = envVars.OPENAPI_API_KEY;
     
-    if (!endpoint || !apiKey) {
+    if (!endpoint) {
       return res.status(400).json({ 
-        error: 'OpenAPI endpoint and API key must be configured before testing',
+        error: 'OpenAPI endpoint must be configured before testing',
         success: false
       });
     }
     
-    // Test the connection with a simple request
-    // This is a generic test that should work with most OpenAPI-compatible LLM services
-    const testPayload = {
-      messages: [
-        {
-          role: "user",
-          content: "Hello, this is a connectivity test. Please respond with 'Connection successful'."
-        }
-      ],
-      max_tokens: 50,
-      temperature: 0.1
-    };
+    // Test the connection by calling the /v1/models endpoint
+    // This is a standard OpenAI-compatible endpoint that most LLM services support
+    let modelsEndpoint;
+    try {
+      const url = new URL(endpoint);
+      // If the endpoint already includes /v1/chat/completions or similar, 
+      // we need to construct the base URL for /v1/models
+      const basePath = url.pathname.replace(/\/v1\/.*$/, '').replace(/\/$/, '');
+      url.pathname = basePath + '/v1/models';
+      modelsEndpoint = url.toString();
+    } catch (error) {
+      return res.status(400).json({ 
+        error: 'Invalid endpoint URL format',
+        success: false
+      });
+    }
     
     const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
+      'Content-Type': 'application/json'
     };
+    
+    // Add API key to headers if provided
+    if (apiKey && apiKey.trim()) {
+      headers['Authorization'] = `Bearer ${apiKey}`;
+    }
     
     // Add timeout for the test request
     const axiosConfig = {
@@ -171,19 +179,32 @@ const testOpenApiConnection = async (req, res) => {
       headers
     };
     
-    console.log(`Testing OpenAPI connection to: ${endpoint}`);
+    console.log(`Testing OpenAPI connection to: ${modelsEndpoint}`);
     
-    const response = await axios.post(endpoint, testPayload, axiosConfig);
+    const response = await axios.get(modelsEndpoint, axiosConfig);
     
     if (response.status === 200 && response.data) {
       console.log('OpenAPI connection test successful');
+      
+      // Extract model information if available
+      let availableModels = [];
+      if (response.data.data && Array.isArray(response.data.data)) {
+        availableModels = response.data.data.map(model => ({
+          id: model.id,
+          name: model.id,
+          object: model.object || 'model'
+        }));
+      }
+      
       res.json({
         success: true,
         message: 'Connection successful',
         response: {
           status: response.status,
-          hasData: !!response.data
-        }
+          hasData: !!response.data,
+          modelsCount: availableModels.length
+        },
+        availableModels: availableModels
       });
     } else {
       console.error('OpenAPI connection test failed: Unexpected response');

@@ -93,7 +93,7 @@ describe('Settings API', () => {
       expect(res.body.error).toBe('OpenAPI endpoint is required');
     });
 
-    it('should return 400 for missing API key', async () => {
+    it('should save settings successfully without API key (optional)', async () => {
       const settings = {
         endpoint: 'https://test-endpoint.com'
       };
@@ -102,8 +102,11 @@ describe('Settings API', () => {
         .put('/api/settings/openapi')
         .send(settings);
 
-      expect(res.statusCode).toBe(400);
-      expect(res.body.error).toBe('API key is required');
+      expect(res.statusCode).toBe(200);
+      expect(res.body.message).toBe('OpenAPI settings updated successfully');
+      expect(res.body.settings.endpoint).toBe('https://test-endpoint.com');
+      expect(res.body.settings.hasApiKey).toBe(false);
+      expect(res.body.settings.isConfigured).toBe(true);
     });
 
     it('should return 400 for invalid URL format', async () => {
@@ -141,7 +144,7 @@ describe('Settings API', () => {
 
       expect(res.statusCode).toBe(400);
       expect(res.body.success).toBe(false);
-      expect(res.body.error).toContain('must be configured before testing');
+      expect(res.body.error).toContain('OpenAPI endpoint must be configured before testing');
     });
 
     it('should handle connection errors gracefully', async () => {

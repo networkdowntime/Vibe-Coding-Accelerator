@@ -1,9 +1,40 @@
 <div class="project-view-container">
-  <header class="header">
-    <div class="nav-section">
-      <a routerLink="/" class="back-link">← Back to Projects</a>
+  <header class="bg-white shadow rounded-xl mb-6 p-6">
+    <div class="!flex !justify-between !items-center !w-full mb-4" style="display: flex !important; justify-content: space-between !important;">
+      <nav class="breadcrumb-nav">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a routerLink="/" class="text-blue-600 hover:text-blue-800">Projects</a>
+          </li>
+          <li class="breadcrumb-separator">/</li>
+          <li class="breadcrumb-item active">{{ projectId || 'Unknown Project' }}</li>
+        </ol>
+      </nav>
+      <a [routerLink]="['/settings']" [queryParams]="{ returnUrl: '/project/' + projectId }" class="settings-icon" title="Settings">
+        <i class="fas fa-cog"></i>
+      </a>
     </div>
-    <h1>Project: {{ projectId || 'Unknown' }}</h1>
+    <div class="project-title-section">
+      <div class="project-title-with-actions">
+        <h1 class="text-xl font-semibold text-gray-800">Project: {{ projectId || 'Unknown' }}</h1>
+        <div class="project-actions">
+          <button 
+            class="icon-btn edit-btn" 
+            (click)="editProjectName()" 
+            title="Edit project name"
+            type="button">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button 
+            class="icon-btn delete-btn" 
+            (click)="deleteProject()" 
+            title="Delete project"
+            type="button">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </header>
   
   <!-- Error Message Display -->
@@ -15,19 +46,6 @@
   
   <main class="content">
     <div class="project-details">
-      <section class="project-info">
-        <h2>Project Information</h2>
-        <div class="info-grid">
-          <div class="info-item">
-            <label>Project ID:</label>
-            <span>{{ projectId || 'N/A' }}</span>
-          </div>
-          <div class="info-item">
-            <label>Status:</label>
-            <span class="status-active">Active</span>
-          </div>
-        </div>
-      </section>
       
       <!-- AI Agent Configuration Section -->
       <section class="agent-config-section">
@@ -48,16 +66,6 @@
           (fileUpdated)="onFileUpdated()"
           (error)="onFileError($event)">
         </app-file-list>
-      </section>
-      
-      <section class="project-actions">
-        <h2>Actions</h2>
-        <div class="action-buttons">
-          <button class="btn btn-secondary" type="button">Configure AI Agent</button>
-          <button class="btn btn-secondary" type="button">Manage OpenAPI</button>
-          <button class="btn btn-warning" type="button">Rename Project</button>
-          <button class="btn btn-danger" type="button">Delete Project</button>
-        </div>
       </section>
     </div>
   </main>

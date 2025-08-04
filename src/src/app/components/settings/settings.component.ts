@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { SettingsService, OpenApiSettings, OpenApiUpdateRequest, TestConnectionResponse } from '../../services/settings.service';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
@@ -28,6 +29,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   isModalOpen = false;
   isFeedbackModalOpen = false;
   
+  // Navigation
+  backToText = 'Projects';
+  backToRoute = '/';
+  
   // Feedback modal data
   feedbackMessage = '';
   feedbackType: 'success' | 'error' = 'success';
@@ -35,7 +40,74 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   private subscription = new Subscription();
 
-  constructor(private settingsService: SettingsService) {}
+  constructor(private settingsService: SettingsService, private router: Router, private route: ActivatedRoute) {
+    // Set back navigation based on route query parameters or fallback
+    this.setBackNavigation();
+  }
+
+  /**
+   * Set back navigation context based on route parameters or referrer
+   */
+  private setBackNavigation(): void {
+    // First, check for query parameters passed via router navigation
+    const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+    if (returnUrl) {
+      this.backToRoute = returnUrl;
+      
+      // Extract project name if it's a project route
+      if (returnUrl.startsWith('/project/')) {
+        const projectMatch = returnUrl.match(/\/project\/([^/?]+)/);
+        if (projectMatch && projectMatch[1]) {
+          this.backToText = decodeURIComponent(projectMatch[1]);
+          return;
+        }
+      } else if (returnUrl === '/') {
+        this.backToText = 'Projects';
+        return;
+      }
+    }
+    
+    // Fallback to checking referrer (less reliable but still useful)
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      const referrer = document.referrer;
+      
+      // If coming from a specific project page
+      if (referrer.includes('/project/')) {
+        const projectMatch = referrer.match(/\/project\/([^/?]+)/);
+        if (projectMatch && projectMatch[1]) {
+          const projectName = decodeURIComponent(projectMatch[1]);
+          this.backToText = projectName;
+          this.backToRoute = `/project/${projectMatch[1]}`;
+          return;
+        }
+      }
+      
+      // If coming from the main projects page or any other page
+      if (referrer.includes(window.location.origin)) {
+        const referrerPath = referrer.split(window.location.origin)[1];
+        if (referrerPath && referrerPath !== '/settings') {
+          this.backToRoute = referrerPath;
+          
+          // Set appropriate text based on the path
+          if (referrerPath === '/' || referrerPath.startsWith('/?')) {
+            this.backToText = 'Projects';
+          } else if (referrerPath.startsWith('/project/')) {
+            const projectMatch = referrerPath.match(/\/project\/([^/?]+)/);
+            if (projectMatch && projectMatch[1]) {
+              this.backToText = decodeURIComponent(projectMatch[1]);
+            }
+          } else {
+            this.backToText = 'Back';
+          }
+          return;
+        }
+      }
+    }
+    
+    // Default fallback
+    this.backToText = 'Projects';
+    this.backToRoute = '/';
+  }
 
   ngOnInit(): void {
     // Subscribe to settings changes
@@ -100,11 +172,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   saveSettings(): void {
     if (!this.formData.endpoint.trim()) {
       this.showFeedback('Endpoint is required', 'error');
-      return;
-    }
-
-    if (!this.formData.apiKey.trim()) {
-      this.showFeedback('API key is required', 'error');
       return;
     }
 
@@ -206,5 +273,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
     return this.currentSettings.isConfigured 
       ? 'OpenAPI endpoint configured' 
       : 'OpenAPI endpoint not configured';
+  }
+
+  /**
+   * Navigate back to previous page
+   */
+  goBack(): void {
+    this.router.navigate([this.backToRoute]);
   }
 }

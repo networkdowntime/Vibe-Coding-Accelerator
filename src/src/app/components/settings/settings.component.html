@@ -1,4 +1,15 @@
 <div class="settings-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb-nav mb-5">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a [routerLink]="backToRoute" class="text-blue-600 hover:text-blue-800">{{ backToText }}</a>
+      </li>
+      <li class="breadcrumb-separator">/</li>
+      <li class="breadcrumb-item active">Settings</li>
+    </ol>
+  </nav>
+  
   <!-- Settings Header -->
   <div class="settings-header">
     <h2>OpenAPI Settings</h2>
@@ -68,14 +79,13 @@
         </div>
 
         <div class="form-group">
-          <label for="apiKey">API Key *</label>
+          <label for="apiKey">API Key</label>
           <input 
             type="password" 
             id="apiKey"
             name="apiKey"
             [(ngModel)]="formData.apiKey"
-            required
-            placeholder="Enter your API key"
+            placeholder="Enter your API key (optional)"
             class="form-control">
           <small class="help-text">Your API key will be stored securely in the .env file</small>
         </div>
