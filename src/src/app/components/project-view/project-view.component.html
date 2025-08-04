@@ -1,0 +1,64 @@
+<div class="project-view-container">
+  <header class="header">
+    <div class="nav-section">
+      <a routerLink="/" class="back-link">← Back to Projects</a>
+    </div>
+    <h1>Project: {{ projectId || 'Unknown' }}</h1>
+  </header>
+  
+  <!-- Error Message Display -->
+  <div *ngIf="errorMessage" class="error-banner">
+    <span class="error-icon">❌</span>
+    {{ errorMessage }}
+    <button class="close-error" (click)="errorMessage = ''" type="button">×</button>
+  </div>
+  
+  <main class="content">
+    <div class="project-details">
+      <section class="project-info">
+        <h2>Project Information</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Project ID:</label>
+            <span>{{ projectId || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Status:</label>
+            <span class="status-active">Active</span>
+          </div>
+        </div>
+      </section>
+      
+      <!-- AI Agent Configuration Section -->
+      <section class="agent-config-section">
+        <h2>AI Agent Configuration</h2>
+        <app-agent-select 
+          [projectName]="projectId || ''"
+          (agentChanged)="onAgentChanged($event)"
+          (techStackChanged)="onTechStackChanged($event)"
+          (error)="onAgentError($event)">
+        </app-agent-select>
+      </section>
+      
+      <!-- File Management Section -->
+      <section class="file-management-section">
+        <app-file-list 
+          [projectName]="projectId || ''"
+          (fileUploaded)="onFileUploaded()"
+          (fileUpdated)="onFileUpdated()"
+          (error)="onFileError($event)">
+        </app-file-list>
+      </section>
+      
+      <section class="project-actions">
+        <h2>Actions</h2>
+        <div class="action-buttons">
+          <button class="btn btn-secondary" type="button">Configure AI Agent</button>
+          <button class="btn btn-secondary" type="button">Manage OpenAPI</button>
+          <button class="btn btn-warning" type="button">Rename Project</button>
+          <button class="btn btn-danger" type="button">Delete Project</button>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

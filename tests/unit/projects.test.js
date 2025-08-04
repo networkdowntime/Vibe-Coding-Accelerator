@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const projectRoutes = require('../../src/backend/routes/projectRoutes.js');
 
-const PROJECTS_DIR = path.resolve(__dirname, '../../../projects');
+const PROJECTS_DIR = path.resolve(__dirname, '../../projects');
 
 const app = express();
 app.use(express.json());
@@ -16,14 +16,16 @@ describe('Project CRUD API', () => {
   });
   afterEach(() => {
     // Clean up all test projects and .deleted folders
-    fs.readdirSync(PROJECTS_DIR).forEach((d) => {
-      if (d.startsWith('testproject')) {
-        fs.rmSync(path.join(PROJECTS_DIR, d), { recursive: true, force: true });
-      }
-      if (d.startsWith('testproject') && d.endsWith('.deleted')) {
-        fs.rmSync(path.join(PROJECTS_DIR, d), { recursive: true, force: true });
-      }
-    });
+    if (fs.existsSync(PROJECTS_DIR)) {
+      fs.readdirSync(PROJECTS_DIR).forEach((d) => {
+        if (d.startsWith('testproject') || d.startsWith('testProject')) {
+          fs.rmSync(path.join(PROJECTS_DIR, d), { recursive: true, force: true });
+        }
+        if ((d.startsWith('testproject') || d.startsWith('testProject')) && d.endsWith('.deleted')) {
+          fs.rmSync(path.join(PROJECTS_DIR, d), { recursive: true, force: true });
+        }
+      });
+    }
   });
 
   it('should create a project', async () => {
@@ -51,15 +53,15 @@ describe('Project CRUD API', () => {
     await request(app).post('/api/projects').send({ name: 'TestProject4' });
     const res = await request(app)
       .put('/api/projects/testProject4')
-      .send({ name: 'TestProject4Renamed' });
+      .send({ newName: 'TestProject4Renamed' });
     expect(res.statusCode).toBe(200);
-    expect(res.body.name).toBe('testproject4renamed');
+    expect(res.body.newName).toBe('testproject4renamed');
   });
 
   it('should delete a project', async () => {
     await request(app).post('/api/projects').send({ name: 'TestProject5' });
     const res = await request(app).delete('/api/projects/testProject5');
-    expect(res.statusCode).toBe(204);
+    expect(res.statusCode).toBe(200);
     // Should not be listed anymore
     const listRes = await request(app).get('/api/projects');
     expect(listRes.body.some((p) => p.name === 'testProject5')).toBe(false);

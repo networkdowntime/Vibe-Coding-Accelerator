@@ -1,0 +1,115 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onCancel()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ getModalTitle() }}</h2>
+      <button class="close-button" (click)="onCancel()" aria-label="Close">×</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Upload Mode -->
+      <div *ngIf="mode === 'upload'" class="upload-section">
+        <div 
+          class="drop-zone"
+          [class.drag-over]="dragOver"
+          [class.has-file]="selectedFile"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)">
+          
+          <div *ngIf="!selectedFile" class="drop-zone-content">
+            <div class="upload-icon">📁</div>
+            <p>Drag and drop a file here or</p>
+            <label class="file-input-label">
+              <input 
+                type="file" 
+                (change)="onFileSelected($event)"
+                accept=".txt,.md,.yml,.yaml,.html,.pdf"
+                class="file-input">
+              <span class="btn btn-secondary">Choose File</span>
+            </label>
+          </div>
+
+          <div *ngIf="selectedFile" class="selected-file">
+            <div class="file-info">
+              <div class="file-icon">📄</div>
+              <div class="file-details">
+                <div class="file-name">{{ selectedFile.name }}</div>
+                <div class="file-size">{{ formatFileSize(selectedFile.size) }}</div>
+              </div>
+              <button 
+                class="remove-file-btn" 
+                (click)="selectedFile = null"
+                type="button">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="supported-types">
+          <small>Supported file types: .txt, .md, .yml, .html, .pdf (max 10MB)</small>
+        </div>
+      </div>
+
+      <!-- Rename Mode -->
+      <div *ngIf="mode === 'rename'" class="rename-section">
+        <div class="current-file">
+          <label>Current Name:</label>
+          <span class="current-name">{{ file?.name }}</span>
+        </div>
+        
+        <div class="form-group">
+          <label for="newFileName">New Name:</label>
+          <input 
+            id="newFileName"
+            type="text" 
+            [(ngModel)]="newFileName"
+            class="form-control"
+            placeholder="Enter new file name"
+            [class.error]="errorMessage">
+        </div>
+
+        <div class="supported-types">
+          <small>Supported file types: .txt, .md, .yml, .html, .pdf</small>
+        </div>
+      </div>
+
+      <!-- Delete Mode -->
+      <div *ngIf="mode === 'delete'" class="delete-section">
+        <div class="warning-icon">⚠️</div>
+        <p class="delete-warning">
+          Are you sure you want to delete this file?
+        </p>
+        <div class="file-info">
+          <strong>{{ file?.name }}</strong>
+          <br>
+          <small>{{ formatFileSize(file?.size || 0) }} • {{ file?.type }}</small>
+        </div>
+        <p class="delete-note">
+          <strong>This action cannot be undone.</strong>
+        </p>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        <span class="error-icon">❌</span>
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="onCancel()"
+        [disabled]="isLoading">
+        Cancel
+      </button>
+      <button 
+        type="button" 
+        [class]="getPrimaryButtonClass()"
+        (click)="onPrimaryAction()"
+        [disabled]="isPrimaryActionDisabled()">
+        {{ getPrimaryButtonText() }}
+      </button>
+    </div>
+  </div>
+</div>

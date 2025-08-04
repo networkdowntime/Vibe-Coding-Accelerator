@@ -10,12 +10,12 @@
 Enable users to select an AI agent and tech stack for their project, dynamically loading options from the filesystem and saving selections.
 
 ## Acceptance Criteria
-- [ ] User can select from available AI agents (from `ai_agents` subdirectories)
-- [ ] Tech stack autocomplete is populated from files in `ai_agents/<agent>/instructions`
-- [ ] Adding a new file in the directory adds it as an option
-- [ ] User can add/remove tech stack elements (displayed as chips)
-- [ ] Tech stack selection is saved to `techstack.txt` in the project directory
-- [ ] Unit/integration tests for backend and frontend
+- [x] User can select from available AI agents (from `ai_agents` subdirectories)
+- [x] Tech stack autocomplete is populated from files in `ai_agents/<agent>/instructions`
+- [x] Adding a new file in the directory adds it as an option
+- [x] User can add/remove tech stack elements (displayed as chips)
+- [x] Tech stack selection is saved to `techstack.txt` in the project directory
+- [x] Unit/integration tests for backend and frontend
 
 ## Technical Requirements
 ### Implementation Details

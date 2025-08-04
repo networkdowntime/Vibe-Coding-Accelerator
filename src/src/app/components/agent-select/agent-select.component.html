@@ -1,0 +1,82 @@
+<div class="agent-select-container">
+  <!-- Agent Selection -->
+  <div class="agent-selection-section">
+    <label class="section-label" for="agent-select">AI Agent</label>
+    <div class="select-wrapper">
+      <select 
+        id="agent-select"
+        class="agent-select"
+        [(ngModel)]="selectedAgent"
+        (change)="onAgentChange()"
+        [disabled]="isLoadingAgents">
+        <option [ngValue]="null">Select an AI Agent...</option>
+        <option *ngFor="let agent of availableAgents" [ngValue]="agent">
+          {{ agent.name }}
+        </option>
+      </select>
+      <div class="loading-indicator" *ngIf="isLoadingAgents">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tech Stack Selection -->
+  <div class="tech-stack-section" *ngIf="selectedAgent">
+    <label class="section-label">Tech Stack</label>
+    
+    <!-- Selected Tech Stacks (Chips) -->
+    <div class="selected-tech-stacks" *ngIf="selectedTechStacks.length > 0">
+      <div class="tech-chip" *ngFor="let stack of selectedTechStacks">
+        <span class="chip-text">{{ stack }}</span>
+        <button 
+          class="chip-remove"
+          (click)="removeTechStack(stack)"
+          type="button"
+          [attr.aria-label]="'Remove ' + stack">
+          ×
+        </button>
+      </div>
+    </div>
+
+    <!-- Tech Stack Input with Autocomplete -->
+    <div class="tech-input-wrapper">
+      <input
+        type="text"
+        class="tech-input"
+        placeholder="Add tech stack..."
+        [(ngModel)]="techStackInput"
+        (input)="onTechStackInputChange($event.target.value || '')"
+        (focus)="onTechStackInputFocus()"
+        (blur)="onTechStackInputBlur()"
+        (keydown)="onTechStackInputKeydown($event)"
+        [disabled]="isLoadingTechStacks">
+      
+      <div class="loading-indicator" *ngIf="isLoadingTechStacks">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Autocomplete Dropdown -->
+      <div class="autocomplete-dropdown" *ngIf="showAutocomplete">
+        <div 
+          class="autocomplete-item"
+          *ngFor="let stack of filteredTechStacks"
+          (click)="addTechStack(stack)">
+          {{ stack.displayName }}
+        </div>
+        <div class="autocomplete-empty" *ngIf="filteredTechStacks.length === 0">
+          No matching tech stacks found
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="selectedTechStacks.length === 0 && !techStackInput">
+      <p class="empty-text">No tech stack selected. Start typing to add technologies.</p>
+    </div>
+  </div>
+
+  <!-- No Agent Selected State -->
+  <div class="no-agent-state" *ngIf="!selectedAgent && !isLoadingAgents">
+    <p class="help-text">Select an AI agent to see available tech stack options.</p>
+  </div>
+</div>

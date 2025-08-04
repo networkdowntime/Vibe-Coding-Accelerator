@@ -1,5 +1,5 @@
 # Product Requirements Document (PRD)
-**Feature Domain:** AI Agent Configuration
+*- [x] Tech stack autocomplete is populated from files in `ai_agents/<agent>/instructions` (pattern: `tech-<n>.instructions.md`)Feature Domain:** AI Agent Configuration
 **Project:** Vibe Coding Accelerator
 **Date:** August 2, 2025
 
@@ -18,14 +18,14 @@ This PRD covers requirements for selecting AI agents, tech stack selection, and 
 **So that** I can generate configurations tailored to my chosen agent
 
 #### Acceptance Criteria
-- [ ] User can select from a list of available AI agents (from `ai_agents` subdirectories)
-- [ ] Agent names are displayed in exploded camel-case, capitalized
-- [ ] Selection updates available tech stack options
+- [x] User can select from a list of available AI agents (from `ai_agents` subdirectories)
+- [x] Agent names are displayed in exploded camel-case, capitalized
+- [x] Selection updates available tech stack options
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
-- [ ] Integration tests passing
+- [x] Code implemented
+- [x] Unit tests written
+- [x] Integration tests passing
 - [ ] Documentation updated
 - [ ] Security review completed
 
@@ -38,14 +38,14 @@ This PRD covers requirements for selecting AI agents, tech stack selection, and 
 
 #### Acceptance Criteria
 - [ ] Tech stack autocomplete is populated from files in `ai_agents/<agent>/instructions` (pattern: `tech-<name>.instructions.md`)
-- [ ] Adding a new file in the directory automatically adds it as an option
-- [ ] User can add/remove tech stack elements (displayed as chips)
-- [ ] Tech stack selection is saved to `techstack.txt` in the project directory
+- [x] Adding a new file in the directory automatically adds it as an option
+- [x] User can add/remove tech stack elements (displayed as chips)
+- [x] Tech stack selection is saved to `techstack.txt` in the project directory
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
-- [ ] Integration tests passing
+- [x] Code implemented
+- [x] Unit tests written
+- [x] Integration tests passing
 - [ ] Documentation updated
 - [ ] Security review completed
 
@@ -66,9 +66,9 @@ This PRD covers requirements for selecting AI agents, tech stack selection, and 
 - [ ] Completeness score is displayed if project has been processed by the LLM
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
-- [ ] Integration tests passing
+- [x] Code implemented
+- [x] Unit tests written
+- [x] Integration tests passing
 - [ ] Documentation updated
 - [ ] Security review completed
 

@@ -1,0 +1,123 @@
+<div class="settings-container">
+  <!-- Settings Header -->
+  <div class="settings-header">
+    <h2>OpenAPI Settings</h2>
+    <div class="status-indicator" [ngClass]="{ 'configured': isConfigured, 'not-configured': !isConfigured }">
+      <span class="status-dot"></span>
+      {{ statusMessage }}
+    </div>
+  </div>
+
+  <!-- Settings Actions -->
+  <div class="settings-actions">
+    <button 
+      type="button" 
+      class="btn btn-primary" 
+      (click)="openSettings()"
+      [disabled]="isLoading">
+      <span *ngIf="isLoading">Loading...</span>
+      <span *ngIf="!isLoading">{{ isConfigured ? 'Edit Settings' : 'Configure' }}</span>
+    </button>
+    
+    <button 
+      type="button" 
+      class="btn btn-secondary test-btn" 
+      (click)="testConnection()"
+      [disabled]="!isConfigured || isTesting"
+      title="Test connection to OpenAPI endpoint">
+      <span *ngIf="isTesting">Testing...</span>
+      <span *ngIf="!isTesting">Test Access</span>
+    </button>
+  </div>
+
+  <!-- Current Settings Display -->
+  <div class="current-settings" *ngIf="currentSettings">
+    <h3>Current Configuration</h3>
+    <div class="setting-item">
+      <label>Endpoint:</label>
+      <span class="setting-value">{{ currentSettings.endpoint || 'Not set' }}</span>
+    </div>
+    <div class="setting-item">
+      <label>API Key:</label>
+      <span class="setting-value">{{ currentSettings.hasApiKey ? '••••••••' : 'Not set' }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeSettings()">
+  <div class="modal-container" (click)="$event.stopPropagation()" #settingsModal>
+    <div class="modal-header">
+      <h3>Configure OpenAPI Settings</h3>
+      <button type="button" class="close-btn" (click)="closeSettings()" aria-label="Close">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <form (ngSubmit)="saveSettings()" #settingsForm="ngForm">
+        <div class="form-group">
+          <label for="endpoint">OpenAPI Endpoint *</label>
+          <input 
+            type="url" 
+            id="endpoint"
+            name="endpoint"
+            [(ngModel)]="formData.endpoint"
+            required
+            placeholder="https://your-llm-endpoint.example.com"
+            class="form-control">
+          <small class="help-text">Enter the full URL to your OpenAPI-compatible LLM endpoint</small>
+        </div>
+
+        <div class="form-group">
+          <label for="apiKey">API Key *</label>
+          <input 
+            type="password" 
+            id="apiKey"
+            name="apiKey"
+            [(ngModel)]="formData.apiKey"
+            required
+            placeholder="Enter your API key"
+            class="form-control">
+          <small class="help-text">Your API key will be stored securely in the .env file</small>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeSettings()">Cancel</button>
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="!settingsForm.form.valid || isLoading">
+            <span *ngIf="isLoading">Saving...</span>
+            <span *ngIf="!isLoading">Save Settings</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Feedback Modal -->
+<div class="modal-overlay feedback-modal" *ngIf="isFeedbackModalOpen" (click)="closeFeedback()">
+  <div class="modal-container" (click)="$event.stopPropagation()" #feedbackModal>
+    <div class="modal-header" [ngClass]="feedbackType">
+      <h3>
+        <span *ngIf="feedbackType === 'success'">✓ Success</span>
+        <span *ngIf="feedbackType === 'error'">⚠ Error</span>
+      </h3>
+      <button type="button" class="close-btn" (click)="closeFeedback()" aria-label="Close">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <p class="feedback-message">{{ feedbackMessage }}</p>
+      <div class="feedback-details" *ngIf="feedbackDetails">
+        <details>
+          <summary>Technical Details</summary>
+          <pre>{{ feedbackDetails }}</pre>
+        </details>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-primary" (click)="closeFeedback()">OK</button>
+    </div>
+  </div>
+</div>

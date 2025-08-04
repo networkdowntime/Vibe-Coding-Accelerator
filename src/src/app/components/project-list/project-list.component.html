@@ -1,0 +1,99 @@
+<div class="project-list-container">
+  <!-- Search and Sort Controls -->
+  <div class="controls-section">
+    <div class="search-sort-controls">
+      <div class="search-container">
+        <input
+          type="text"
+          placeholder="Search projects..."
+          class="search-input"
+          [(ngModel)]="searchQuery"
+          (input)="onSearchChange()"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+      
+      <select class="sort-select" [(ngModel)]="sortBy" (change)="onSortChange()">
+        <option value="recent">Most Recent</option>
+        <option value="alphabetical">Alphabetical</option>
+      </select>
+    </div>
+    
+    <button class="create-project-btn" (click)="openCreateModal()" [disabled]="isLoading">
+      + Create New Project
+    </button>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-banner">
+    <span class="error-icon">⚠️</span>
+    {{ error }}
+    <button class="retry-btn" (click)="loadProjects()" [disabled]="isLoading">
+      Retry
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading && !projects.length" class="loading-container">
+    <div class="loading-spinner-large"></div>
+    <p>Loading projects...</p>
+  </div>
+
+  <!-- Projects Grid -->
+  <div *ngIf="!isLoading || projects.length" class="projects-section">
+    <div *ngIf="filteredProjects.length === 0 && !isLoading" class="no-projects">
+      <div class="no-projects-icon">📁</div>
+      <h3>{{ searchQuery ? 'No projects found' : 'No projects yet' }}</h3>
+      <p *ngIf="searchQuery">Try adjusting your search terms.</p>
+      <p *ngIf="!searchQuery">Create your first project to get started.</p>
+      <button *ngIf="!searchQuery" class="create-first-btn" (click)="openCreateModal()">
+        Create Your First Project
+      </button>
+    </div>
+
+    <div *ngIf="filteredProjects.length > 0" class="projects-grid">
+      <div 
+        *ngFor="let project of filteredProjects" 
+        class="project-tile"
+        [attr.data-project-name]="project.name"
+      >
+        <div class="tile-content" (click)="openProject(project)">
+          <div class="project-icon">📋</div>
+          <h3 class="project-name">{{ project.displayName }}</h3>
+          <p class="project-date">Created: {{ formatDate(project.createdAt) }}</p>
+          <p class="project-date">Modified: {{ formatDate(project.modifiedAt) }}</p>
+        </div>
+        
+        <div class="tile-actions">
+          <button 
+            class="action-btn rename-btn" 
+            (click)="openRenameModal(project)" 
+            title="Rename Project"
+            [disabled]="isLoading"
+          >
+            ✏️
+          </button>
+          <button 
+            class="action-btn delete-btn" 
+            (click)="openDeleteModal(project)" 
+            title="Delete Project"
+            [disabled]="isLoading"
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Count -->
+  <div *ngIf="filteredProjects.length > 0" class="results-info">
+    Showing {{ filteredProjects.length }} of {{ projects.length }} projects
+  </div>
+</div>
+
+<!-- Modal -->
+<app-project-modal 
+  *ngIf="showModal" 
+  [data]="modalData"
+></app-project-modal>

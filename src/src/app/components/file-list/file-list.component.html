@@ -1,0 +1,162 @@
+<div class="file-list-container">
+  <!-- Header with Search and Controls -->
+  <div class="file-list-header">
+    <div class="header-left">
+      <h3>Project Files</h3>
+      <span class="file-count">{{ filteredFiles.length }} file{{ filteredFiles.length !== 1 ? 's' : '' }}</span>
+    </div>
+    
+    <div class="header-right">
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          placeholder="Search files..."
+          class="search-input">
+        <span class="search-icon">🔍</span>
+      </div>
+      
+      <button 
+        class="btn btn-primary upload-btn" 
+        (click)="openUploadModal()"
+        type="button">
+        <span class="upload-icon">📤</span>
+        Upload File
+      </button>
+    </div>
+  </div>
+
+  <!-- Sort Controls -->
+  <div class="sort-controls">
+    <span class="sort-label">Sort by:</span>
+    <button 
+      class="sort-btn" 
+      [class.active]="sortBy === 'name'"
+      (click)="onSortChange('name')">
+      Name <span [class]="getSortArrowClass('name')"></span>
+    </button>
+    <button 
+      class="sort-btn" 
+      [class.active]="sortBy === 'date'"
+      (click)="onSortChange('date')">
+      Date <span [class]="getSortArrowClass('date')"></span>
+    </button>
+    <button 
+      class="sort-btn" 
+      [class.active]="sortBy === 'size'"
+      (click)="onSortChange('size')">
+      Size <span [class]="getSortArrowClass('size')"></span>
+    </button>
+    <button 
+      class="sort-btn" 
+      [class.active]="sortBy === 'type'"
+      (click)="onSortChange('type')">
+      Type <span [class]="getSortArrowClass('type')"></span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Loading files...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && files.length === 0" class="empty-state">
+    <div class="empty-icon">📁</div>
+    <h4>No files yet</h4>
+    <p>Upload your first file to get started</p>
+    <button 
+      class="btn btn-primary" 
+      (click)="openUploadModal()"
+      type="button">
+      Upload File
+    </button>
+  </div>
+
+  <!-- No Search Results -->
+  <div *ngIf="!isLoading && files.length > 0 && filteredFiles.length === 0" class="no-results-state">
+    <div class="no-results-icon">🔍</div>
+    <h4>No files found</h4>
+    <p>Try adjusting your search terms</p>
+    <button 
+      class="btn btn-secondary" 
+      (click)="searchTerm = ''; onSearchChange()"
+      type="button">
+      Clear Search
+    </button>
+  </div>
+
+  <!-- File Grid -->
+  <div *ngIf="!isLoading && filteredFiles.length > 0" class="file-grid">
+    <div 
+      *ngFor="let file of filteredFiles" 
+      class="file-tile"
+      [title]="file.name">
+      
+      <div class="file-tile-content" (click)="openFile(file)">
+        <div class="file-icon" [class]="getFileIconClass(file.name)">
+          <span class="file-extension">{{ file.type.toUpperCase().substring(1) }}</span>
+        </div>
+        
+        <div class="file-info">
+          <div class="file-name">{{ file.name }}</div>
+          <div class="file-metadata">
+            <span class="file-size">{{ formatFileSize(file.size) }}</span>
+            <span class="file-date">{{ formatDate(file.modifiedAt) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-actions">
+        <button 
+          class="action-btn rename-btn" 
+          (click)="openRenameModal(file)"
+          title="Rename file"
+          type="button">
+          ✏️
+        </button>
+        <button 
+          class="action-btn delete-btn" 
+          (click)="openDeleteModal(file)"
+          title="Delete file"
+          type="button">
+          🗑️
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- File Upload Modal -->
+<app-file-modal
+  [isOpen]="showUploadModal"
+  [mode]="'upload'"
+  [projectName]="projectName"
+  (close)="onUploadModalClose()"
+  (success)="onFileUploaded($event)"
+  (error)="onModalError($event)">
+</app-file-modal>
+
+<!-- File Rename Modal -->
+<app-file-modal
+  [isOpen]="showRenameModal"
+  [mode]="'rename'"
+  [projectName]="projectName"
+  [file]="selectedFile"
+  (close)="onRenameModalClose()"
+  (success)="onFileRenamed()"
+  (error)="onModalError($event)">
+</app-file-modal>
+
+<!-- File Delete Modal -->
+<app-file-modal
+  [isOpen]="showDeleteModal"
+  [mode]="'delete'"
+  [projectName]="projectName"
+  [file]="selectedFile"
+  (close)="onDeleteModalClose()"
+  (success)="onFileDeleted()"
+  (error)="onModalError($event)">
+</app-file-modal>

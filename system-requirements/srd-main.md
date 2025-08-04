@@ -10,7 +10,7 @@
 ## 2. Functional Requirements
 - Project CRUD operations (see PRDs)
 - AI agent and tech stack selection (filesystem-driven)
-- File upload, view, delete, rename (supported types only)
+- File upload, view, delete, rename (supported types only) ✅ *Completed in Task 0006*
 - OpenAPI endpoint/API key management and validation
 - Config generation via LLM (per file, with prompt as defined in system architecture)
 - Post-processing consistency check via LLM (all export files)

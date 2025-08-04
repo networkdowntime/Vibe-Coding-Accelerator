@@ -1,0 +1,59 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ title }}</h2>
+      <button class="close-btn" (click)="onCancel()" aria-label="Close">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+      
+      <div *ngIf="data.mode === 'create' || data.mode === 'rename'">
+        <label for="projectName" class="form-label">
+          {{ data.mode === 'create' ? 'Project Name' : 'New Project Name' }}
+        </label>
+        <input
+          id="projectName"
+          type="text"
+          [(ngModel)]="projectName"
+          class="form-input"
+          placeholder="Enter project name..."
+          [disabled]="isLoading"
+          maxlength="100"
+          (keyup.enter)="onSubmit()"
+        />
+        <div class="form-hint">
+          Project names will be converted to camelCase format for storage.
+        </div>
+      </div>
+      
+      <div *ngIf="data.mode === 'delete'" class="delete-confirmation">
+        <p>Are you sure you want to delete the project <strong>{{ data.projectDisplayName }}</strong>?</p>
+        <p class="delete-warning">
+          The project directory will be renamed with a ".deleted" extension and can be recovered manually if needed.
+        </p>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button 
+        class="btn btn-secondary" 
+        (click)="onCancel()"
+        [disabled]="isLoading"
+      >
+        Cancel
+      </button>
+      <button 
+        class="btn"
+        [class]="primaryButtonClass"
+        (click)="onSubmit()"
+        [disabled]="!isFormValid || isLoading"
+      >
+        <span *ngIf="isLoading" class="loading-spinner"></span>
+        {{ isLoading ? 'Processing...' : primaryButtonText }}
+      </button>
+    </div>
+  </div>
+</div>

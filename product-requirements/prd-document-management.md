@@ -18,16 +18,16 @@ This PRD covers requirements for uploading, viewing, deleting, and renaming proj
 **So that** I can provide supporting documentation for config generation
 
 #### Acceptance Criteria
-- [ ] User can upload files via drag-and-drop or add button
-- [ ] Supported file types: txt, md, yml, html, pdf
-- [ ] Uploaded files are stored in the project's `files` subdirectory
-- [ ] Uploaded files appear as tiles in the UI
-- [ ] Upload is confirmed via modal
+- [x] User can upload files via drag-and-drop or add button *(Completed in Task 0006)*
+- [x] Supported file types: txt, md, yml, html, pdf (API/backend)
+- [x] Uploaded files are stored in the project's `files` subdirectory (API/backend)
+- [x] Uploaded files appear as tiles in the UI *(Completed in Task 0006)*
+- [x] Upload is confirmed via modal *(Completed in Task 0006)*
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
-- [ ] Integration tests passing
+- [x] Code implemented (API/backend + Frontend in Task 0006)
+- [x] Unit tests written (API/backend + Frontend in Task 0006)
+- [x] Integration tests passing (API/backend + Frontend in Task 0006)
 - [ ] Documentation updated
 - [ ] Security review completed
 
@@ -39,14 +39,14 @@ This PRD covers requirements for uploading, viewing, deleting, and renaming proj
 **So that** I can quickly reference project documentation
 
 #### Acceptance Criteria
-- [ ] Clicking a file tile opens the file in the browser (for supported types)
-- [ ] Supported for: txt, md, yml, html, pdf
-- [ ] UI is desktop-optimized and accessible
+- [x] Clicking a file tile opens the file in the browser (for supported types) *(Completed in Task 0006)*
+- [x] Supported for: txt, md, yml, html, pdf (API/backend)
+- [x] UI is desktop-optimized and accessible *(Completed in Task 0006)*
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
-- [ ] Integration tests passing
+- [x] Code implemented (API/backend + Frontend in Task 0006)
+- [x] Unit tests written (API/backend + Frontend in Task 0006)
+- [x] Integration tests passing (API/backend + Frontend in Task 0006)
 - [ ] Documentation updated
 - [ ] Security review completed
 
@@ -58,14 +58,14 @@ This PRD covers requirements for uploading, viewing, deleting, and renaming proj
 **So that** I can manage my project documentation
 
 #### Acceptance Criteria
-- [ ] User can delete a file (with confirmation modal)
-- [ ] User can rename a file (with collision prevention)
-- [ ] UI updates immediately to reflect changes
+- [x] User can delete a file (with confirmation modal) *(Completed in Task 0006)*
+- [x] User can rename a file (with collision prevention) (API/backend)
+- [x] UI updates immediately to reflect changes *(Completed in Task 0006)*
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
-- [ ] Integration tests passing
+- [x] Code implemented (API/backend + Frontend in Task 0006)
+- [x] Unit tests written (API/backend + Frontend in Task 0006)
+- [x] Integration tests passing (API/backend + Frontend in Task 0006)
 - [ ] Documentation updated
 - [ ] Security review completed
 

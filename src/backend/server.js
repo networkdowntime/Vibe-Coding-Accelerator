@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const projectRoutes = require('./routes/projectRoutes');
+const fileRoutes = require('./routes/fileRoutes');
+const agentRoutes = require('./routes/agentRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,6 +16,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/projects', projectRoutes);
+app.use('/api/projects', fileRoutes);
+app.use('/api/projects', agentRoutes); // Tech stack routes are under projects
+app.use('/api', agentRoutes); // Agent listing routes
+app.use('/api/settings', settingsRoutes); // Settings routes
 
 // Health check endpoint
 app.get('/health', (req, res) => {

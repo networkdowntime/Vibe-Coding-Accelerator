@@ -11,7 +11,7 @@ Establish comprehensive unit and integration testing for all backend and fronten
 
 ## Acceptance Criteria
 - [ ] Unit tests for all backend and frontend modules
-- [ ] Integration tests for critical workflows (project CRUD, file management, LLM processing)
+- [ ] Integration tests for critical workflows (project CRUD, ✅ file management [Task 0006], LLM processing)
 - [ ] Security review/checks for all endpoints and file operations
 - [ ] Code quality tools (linting, formatting) are configured and enforced
 - [ ] Test coverage reports are generated
