@@ -5,6 +5,8 @@ const projectRoutes = require('./routes/projectRoutes');
 const fileRoutes = require('./routes/fileRoutes');
 const agentRoutes = require('./routes/agentRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
+const llmRoutes = require('./routes/llm');
+const traceabilityRoutes = require('./routes/traceability');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,6 +22,8 @@ app.use('/api/projects', fileRoutes);
 app.use('/api/projects', agentRoutes); // Tech stack routes are under projects
 app.use('/api', agentRoutes); // Agent listing routes
 app.use('/api/settings', settingsRoutes); // Settings routes
+app.use('/api/llm', llmRoutes); // LLM processing routes
+app.use('/api/traceability', traceabilityRoutes); // Traceability and consistency check routes
 
 // Health check endpoint
 app.get('/health', (req, res) => {

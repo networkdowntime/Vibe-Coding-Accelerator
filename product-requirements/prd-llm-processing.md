@@ -38,15 +38,15 @@ This PRD covers requirements for submitting files/configs to the LLM, handling r
 **So that** I can understand how well my documentation and configs cover best practices
 
 #### Acceptance Criteria
-- [ ] Completeness score is calculated based on presence of related guidelines and documents
-- [ ] Score is displayed in the project view/edit page if LLM processing has occurred
+- [x] Completeness score is calculated based on presence of related guidelines and documents
+- [x] Score is displayed in the project view/edit page if LLM processing has occurred
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
-- [ ] Integration tests passing
-- [ ] Documentation updated
-- [ ] Security review completed
+- [x] Code implemented
+- [x] Unit tests written
+- [x] Integration tests passing
+- [x] Documentation updated
+- [x] Security review completed
 
 ---
 

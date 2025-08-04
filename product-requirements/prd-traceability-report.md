@@ -18,18 +18,18 @@ This PRD covers requirements for generating, viewing, and exporting the traceabi
 **So that** I can review how my project aligns with best practices and standards
 
 #### Acceptance Criteria
-- [ ] Report is generated in Markdown format after LLM processing
-- [ ] Report includes aspects of tech stack, rules, and identifies missing guidelines
-- [ ] Missing documents impact the completeness score
-- [ ] Report is viewable in the browser (not just in export zip)
-- [ ] User can download the report as Markdown if desired
+- [x] Report is generated in Markdown format after LLM processing
+- [x] Report includes aspects of tech stack, rules, and identifies missing guidelines
+- [x] Missing documents impact the completeness score
+- [x] Report is viewable in the browser (not just in export zip)
+- [x] User can download the report as Markdown if desired
 
 #### Definition of Done
-- [ ] Code implemented
-- [ ] Unit tests written
-- [ ] Integration tests passing
-- [ ] Documentation updated
-- [ ] Security review completed
+- [x] Code implemented
+- [x] Unit tests written
+- [x] Integration tests passing
+- [x] Documentation updated
+- [x] Security review completed
 
 ---
 

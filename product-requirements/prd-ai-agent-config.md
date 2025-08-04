@@ -1,5 +1,24 @@
 # Product Requirements Document (PRD)
-*- [x] Tech stack autocomplete is populated from files in `ai_agents/<agent>/instructions` (pattern: `tech-<n>.instructions.md`)Feature Domain:** AI Agent Configuration
+*- [x] Tech sta### User Story: Generate AI Agent Config
+**As a** user
+**I want** to generate a configuration package for my project
+**So that** I can use it with my selected AI agent and tech stack
+
+#### Acceptance Criteria
+- [ ] User can trigger config generation via a button
+- [ ] Progress bar shows percentage of files processed
+- [ ] If LLM fails or returns partial result, user is notified via modal and can retry or cancel (retry resumes from failed step)
+- [ ] On success, config files are copied to `export` directory and zipped
+- [ ] User can download the zip file
+- [x] Traceability report is generated in Markdown and viewable in the browser
+- [x] Completeness score is displayed if project has been processed by the LLM
+
+#### Definition of Done
+- [ ] Code implemented
+- [ ] Unit tests written
+- [ ] Integration tests passing
+- [ ] Documentation updated
+- [ ] Security review completedopulated from files in `ai_agents/<agent>/instructions` (pattern: `tech-<n>.instructions.md`)Feature Domain:** AI Agent Configuration
 **Project:** Vibe Coding Accelerator
 **Date:** August 2, 2025
 

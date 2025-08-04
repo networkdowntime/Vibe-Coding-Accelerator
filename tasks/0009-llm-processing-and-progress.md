@@ -10,11 +10,11 @@
 Integrate with the LLM via OpenAPI, submit files/configs for processing, and provide progress bar and error handling in the UI.
 
 ## Acceptance Criteria
-- [ ] System submits each relevant file to the LLM for processing
-- [ ] Progress bar shows percentage of files processed
-- [ ] If LLM fails or returns partial result, user is notified via modal and can retry/cancel (retry resumes from failed step)
-- [ ] On success, processed files are saved to the export directory
-- [ ] Unit/integration tests for backend and frontend
+- [x] System submits each relevant file to the LLM for processing
+- [x] Progress bar shows percentage of files processed
+- [x] If LLM fails or returns partial result, user is notified via modal and can retry/cancel (retry resumes from failed step)
+- [x] On success, processed files are saved to the export directory
+- [x] Unit/integration tests for backend and frontend
 
 ## Technical Requirements
 ### Implementation Details

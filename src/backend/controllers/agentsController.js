@@ -1,8 +1,8 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-// Get the root path of the project (4 levels up from backend/controllers)
-const rootPath = path.join(__dirname, '..', '..', '..', '..');
+// Get the root path of the project (3 levels up from backend/controllers)
+const rootPath = path.join(__dirname, '..', '..', '..');
 const aiAgentsPath = path.join(rootPath, 'ai_agents');
 const projectsPath = path.join(rootPath, 'projects');
 

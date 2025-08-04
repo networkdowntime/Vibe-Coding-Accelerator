@@ -1,0 +1,191 @@
+<div class="llm-progress-overlay" *ngIf="visible" (click)="close()">
+  <div class="llm-progress-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <i [class]="getStatusIcon()"></i>
+        LLM Processing
+      </h3>
+      <button class="close-button" (click)="close()" type="button">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Progress Bar -->
+      <div class="progress-section">
+        <div class="progress-bar-container">
+          <div class="progress-bar">
+            <div 
+              class="progress-fill" 
+              [style.width]="getProgressWidth()"
+              [class.processing]="processingState.isProcessing"
+              [class.completed]="processingState.currentJob?.status === 'completed'"
+              [class.failed]="processingState.currentJob?.status === 'failed'">
+            </div>
+          </div>
+          <div class="progress-percentage">
+            {{ processingState.currentJob?.progress?.percentage || 0 }}%
+          </div>
+        </div>
+        
+        <div class="progress-text">
+          {{ getProgressText() }}
+        </div>
+      </div>
+
+      <!-- File Details -->
+      <div class="file-details" *ngIf="processingState.currentJob">
+        <div class="detail-row">
+          <span class="label">Total Files:</span>
+          <span class="value">{{ processingState.currentJob?.progress?.total }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Completed:</span>
+          <span class="value text-green-600">{{ processingState.currentJob?.progress?.completed }}</span>
+        </div>
+        <div class="detail-row" *ngIf="(processingState.currentJob?.progress?.failed || 0) > 0">
+          <span class="label">Failed:</span>
+          <span class="value text-red-600">{{ processingState.currentJob?.progress?.failed }}</span>
+        </div>
+      </div>
+
+      <!-- Error Summary -->
+      <div class="error-summary" *ngIf="processingState.currentJob?.errors && (processingState.currentJob?.errors?.length || 0) > 0">
+        <h4 class="error-title">
+          <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+          Processing Issues ({{ processingState.currentJob?.errors?.length }})
+        </h4>
+        <div class="error-list">
+          <div class="error-item" *ngFor="let error of processingState.currentJob?.errors?.slice(0, 3)">
+            <span class="error-file">{{ error.file }}</span>
+            <span class="error-message">{{ error.error }}</span>
+          </div>
+          <div class="error-more" *ngIf="(processingState.currentJob?.errors?.length || 0) > 3">
+            And {{ (processingState.currentJob?.errors?.length || 0) - 3 }} more errors...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <!-- Action Buttons -->
+      <div class="button-group">
+        <button 
+          class="btn btn-secondary" 
+          (click)="close()" 
+          type="button"
+          *ngIf="!processingState.isProcessing">
+          Close
+        </button>
+        
+        <button 
+          class="btn btn-warning" 
+          (click)="confirmCancel()" 
+          type="button"
+          *ngIf="canCancel()">
+          <i class="fas fa-stop"></i>
+          Cancel
+        </button>
+        
+        <button 
+          class="btn btn-primary" 
+          (click)="showRetryDialog()" 
+          type="button"
+          *ngIf="canRetry()">
+          <i class="fas fa-redo"></i>
+          Retry
+        </button>
+
+        <button 
+          class="btn btn-success" 
+          (click)="startProcessing()" 
+          type="button"
+          *ngIf="!processingState.isProcessing && !processingState.currentJob">
+          <i class="fas fa-play"></i>
+          Start Processing
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showCancelModal" (click)="closeCancelModal()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+        Cancel Processing
+      </h4>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to cancel the LLM processing?</p>
+      <p class="text-sm text-gray-600">This will stop the current processing and you will lose progress.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeCancelModal()" type="button">
+        Keep Processing
+      </button>
+      <button class="btn btn-warning" (click)="cancelProcessing()" type="button">
+        <i class="fas fa-stop"></i>
+        Cancel Processing
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Retry Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showRetryModal" (click)="closeRetryModal()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="fas fa-redo text-blue-500"></i>
+        Retry Processing
+      </h4>
+    </div>
+    <div class="modal-body">
+      <p>Do you want to retry the LLM processing?</p>
+      <p class="text-sm text-gray-600">This will resume processing from where it left off.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeRetryModal()" type="button">
+        Cancel
+      </button>
+      <button class="btn btn-primary" (click)="retryProcessing()" type="button">
+        <i class="fas fa-redo"></i>
+        Retry Processing
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal-overlay" *ngIf="showErrorModal" (click)="closeErrorModal()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="fas fa-exclamation-circle text-red-500"></i>
+        Processing Error
+      </h4>
+    </div>
+    <div class="modal-body">
+      <p class="error-message">{{ errorMessage }}</p>
+      <div class="error-actions" *ngIf="canRetry()">
+        <p class="text-sm text-gray-600">You can retry the processing to resume from where it failed.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeErrorModal()" type="button">
+        Close
+      </button>
+      <button 
+        class="btn btn-primary" 
+        (click)="retryProcessing(); closeErrorModal()" 
+        type="button"
+        *ngIf="canRetry()">
+        <i class="fas fa-redo"></i>
+        Retry
+      </button>
+    </div>
+  </div>
+</div>

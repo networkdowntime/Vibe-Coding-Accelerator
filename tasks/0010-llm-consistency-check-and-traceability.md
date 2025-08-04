@@ -10,12 +10,12 @@
 After initial config generation, submit all export files to the LLM for a consistency check, then generate and display a Markdown traceability report in the browser.
 
 ## Acceptance Criteria
-- [ ] All export files are submitted to LLM for consistency check after initial processing
-- [ ] LLM returns corrected files (if needed), which overwrite originals
-- [ ] Traceability report is generated in Markdown, viewable in browser
-- [ ] Report shows requirements sources, gaps, and completeness score
-- [ ] User can download the report as Markdown
-- [ ] Unit/integration tests for backend and frontend
+- [x] All export files are submitted to LLM for consistency check after initial processing
+- [x] LLM returns corrected files (if needed), which overwrite originals
+- [x] Traceability report is generated in Markdown, viewable in browser
+- [x] Report shows requirements sources, gaps, and completeness score
+- [x] User can download the report as Markdown
+- [x] Unit/integration tests for backend and frontend
 
 ## Technical Requirements
 ### Implementation Details
