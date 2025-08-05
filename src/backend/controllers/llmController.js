@@ -22,8 +22,9 @@ const getOpenAPISettings = () => {
   const endpoint = process.env.OPENAPI_ENDPOINT;
   const apiKey = process.env.OPENAPI_API_KEY;
   
-  if (!endpoint || !apiKey) {
-    throw new Error('OpenAPI endpoint and API key must be configured');
+  console.log('OpenAPI settings:', { endpoint, apiKey });
+  if (!endpoint) {
+    throw new Error('OpenAPI endpoint must be configured');
   }
   
   return { endpoint, apiKey };
@@ -35,12 +36,16 @@ const getOpenAPISettings = () => {
 const createLLMClient = () => {
   const { endpoint, apiKey } = getOpenAPISettings();
   
+  // API key is optional; only add Authorization header if present
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  if (apiKey) {
+    headers['Authorization'] = `Bearer ${apiKey}`;
+  }
   return axios.create({
     baseURL: endpoint,
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
+    headers: headers,
     timeout: 30000 // 30 second timeout
   });
 };

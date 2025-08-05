@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { FileListComponent } from '../file-list/file-list.component';
 import { AgentSelectComponent } from '../agent-select/agent-select.component';
 import { ProjectModalComponent, ProjectModalData, ProjectModalResult } from '../project-modal/project-modal.component';
 import { Agent } from '../../services/agent.service';
 import { ProjectService, Project } from '../../services/project.service';
+import { LlmService, ProcessingState } from '../../services/llm.service';
 
 @Component({
   selector: 'app-project-view',
@@ -14,12 +16,21 @@ import { ProjectService, Project } from '../../services/project.service';
   templateUrl: './project-view.component.html',
   styleUrl: './project-view.component.scss'
 })
-export class ProjectViewComponent implements OnInit {
+export class ProjectViewComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  
   projectId: string | null = null;
   project: Project | null = null;
   errorMessage: string = '';
   selectedAgent: Agent | null = null;
   selectedTechStack: string[] = [];
+  
+  // LLM Processing state
+  processingState: ProcessingState = {
+    isProcessing: false,
+    currentJob: null,
+    error: null
+  };
   
   // Modal state
   showModal: boolean = false;
@@ -28,7 +39,8 @@ export class ProjectViewComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private llmService: LlmService
   ) {}
   
   ngOnInit(): void {
@@ -36,8 +48,20 @@ export class ProjectViewComponent implements OnInit {
     if (this.projectId) {
       this.loadProject();
     }
+    
+    // Subscribe to LLM processing state
+    this.llmService.processingState$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(state => {
+        this.processingState = state;
+      });
   }
-
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  
   /**
    * Load project data
    */
@@ -57,7 +81,140 @@ export class ProjectViewComponent implements OnInit {
       }
     });
   }
-
+  
+  /**
+   * Check if config generation can be started
+   */
+  get canGenerateConfig(): boolean {
+    return this.selectedAgent !== null && 
+           this.selectedTechStack.length > 0 && 
+           !this.processingState.isProcessing;
+  }
+  
+  /**
+   * Get safe progress info for template
+   */
+  get safeProgressInfo() {
+    const job = this.processingState.currentJob;
+    if (!job || !job.progress) {
+      return { completed: 0, failed: 0, total: 0, current: null };
+    }
+    return {
+      completed: job.progress.completed || 0,
+      failed: job.progress.failed || 0,
+      total: job.progress.total || 0,
+      current: job.progress.current || null
+    };
+  }
+  
+  /**
+   * Get safe error info for template
+   */
+  get safeErrorInfo() {
+    const job = this.processingState.currentJob;
+    return {
+      hasErrors: !!(job?.errors && job.errors.length > 0),
+      errors: job?.errors || [],
+      count: job?.errors?.length || 0
+    };
+  }
+  
+  /**
+   * Generate AI agent configuration
+   */
+  generateConfig(): void {
+    if (!this.canGenerateConfig || !this.projectId) {
+      return;
+    }
+    
+    this.llmService.startProcessing(this.projectId).subscribe({
+      next: (response) => {
+        console.log('Config generation started:', response.message);
+      },
+      error: (error) => {
+        console.error('Error starting config generation:', error);
+        this.errorMessage = error.message || 'Failed to start config generation';
+        // Clear error after 5 seconds
+        setTimeout(() => {
+          this.errorMessage = '';
+        }, 5000);
+      }
+    });
+  }
+  
+  /**
+   * Cancel config generation
+   */
+  cancelConfigGeneration(): void {
+    if (this.processingState.currentJob) {
+      this.llmService.cancelProcessing(this.processingState.currentJob.jobId).subscribe({
+        next: (response) => {
+          console.log('Config generation cancelled:', response.message);
+        },
+        error: (error) => {
+          console.error('Error cancelling config generation:', error);
+          this.errorMessage = error.message || 'Failed to cancel config generation';
+          // Clear error after 5 seconds
+          setTimeout(() => {
+            this.errorMessage = '';
+          }, 5000);
+        }
+      });
+    }
+  }
+  
+  /**
+   * Retry failed config generation
+   */
+  retryConfigGeneration(): void {
+    if (this.processingState.currentJob) {
+      this.llmService.retryProcessing(this.processingState.currentJob.jobId).subscribe({
+        next: (response) => {
+          console.log('Config generation restarted:', response.message);
+        },
+        error: (error) => {
+          console.error('Error retrying config generation:', error);
+          this.errorMessage = error.message || 'Failed to retry config generation';
+          // Clear error after 5 seconds
+          setTimeout(() => {
+            this.errorMessage = '';
+          }, 5000);
+        }
+      });
+    }
+  }
+  
+  /**
+   * Download generated results
+   */
+  downloadResults(): void {
+    if (this.processingState.currentJob && this.processingState.currentJob.status === 'completed') {
+      this.llmService.getResults(this.processingState.currentJob.jobId).subscribe({
+        next: (results) => {
+          // Create and download a JSON file with the results
+          const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${this.projectId}-config-results.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+          console.log('Generated config results downloaded');
+        },
+        error: (error) => {
+          console.error('Error downloading results:', error);
+          this.errorMessage = error.message || 'Failed to download results';
+          // Clear error after 5 seconds
+          setTimeout(() => {
+            this.errorMessage = '';
+          }, 5000);
+        }
+      });
+    }
+  }
+  
   /**
    * Handle file upload success
    */
@@ -65,7 +222,7 @@ export class ProjectViewComponent implements OnInit {
     // File was uploaded successfully - could show notification here
     console.log('File uploaded successfully');
   }
-
+  
   /**
    * Handle file updates (rename/delete)
    */
@@ -73,7 +230,7 @@ export class ProjectViewComponent implements OnInit {
     // File was updated successfully - could show notification here
     console.log('File updated successfully');
   }
-
+  
   /**
    * Handle file management errors
    */
@@ -84,7 +241,7 @@ export class ProjectViewComponent implements OnInit {
       this.errorMessage = '';
     }, 5000);
   }
-
+  
   /**
    * Handle agent selection change
    */
@@ -92,7 +249,7 @@ export class ProjectViewComponent implements OnInit {
     this.selectedAgent = agent;
     console.log('Selected agent:', agent);
   }
-
+  
   /**
    * Handle tech stack selection change
    */
@@ -100,7 +257,7 @@ export class ProjectViewComponent implements OnInit {
     this.selectedTechStack = techStack;
     console.log('Selected tech stack:', techStack);
   }
-
+  
   /**
    * Handle agent selection errors
    */
@@ -111,7 +268,7 @@ export class ProjectViewComponent implements OnInit {
       this.errorMessage = '';
     }, 5000);
   }
-
+  
   /**
    * Edit project name
    */
@@ -125,7 +282,7 @@ export class ProjectViewComponent implements OnInit {
     };
     this.showModal = true;
   }
-
+  
   /**
    * Delete project
    */

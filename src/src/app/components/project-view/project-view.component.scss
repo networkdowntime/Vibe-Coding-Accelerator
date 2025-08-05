@@ -268,11 +268,238 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.agent-config-section .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .agent-config-section h2 {
-  margin: 0 0 20px 0;
+  margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
   color: #333;
+}
+
+/* Config Actions */
+.config-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Generate Config Button */
+.generate-config-btn {
+  background: linear-gradient(45deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.generate-config-btn:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+  background: linear-gradient(45deg, #0056b3, #004085);
+}
+
+.generate-config-btn.disabled {
+  background: #6c757d;
+  color: #adb5bd;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.generate-config-btn.disabled:hover {
+  transform: none;
+  background: #6c757d;
+}
+
+/* Processing Controls */
+.processing-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cancel-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.cancel-btn:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+.retry-btn {
+  background: #ffc107;
+  color: #212529;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.retry-btn:hover {
+  background: #e0a800;
+  transform: translateY(-1px);
+}
+
+.download-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.download-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+/* Progress Section */
+.progress-section {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.progress-status {
+  font-weight: 600;
+  color: #495057;
+}
+
+.progress-details {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.progress-bar.success {
+  background: linear-gradient(90deg, #28a745, #218838);
+}
+
+.progress-bar.error {
+  background: linear-gradient(90deg, #dc3545, #c82333);
+}
+
+.progress-bar.warning {
+  background: linear-gradient(90deg, #ffc107, #e0a800);
+}
+
+.current-file {
+  font-size: 14px;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.current-file code {
+  background: #e9ecef;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 13px;
+}
+
+/* Error Details */
+.error-details {
+  margin-top: 12px;
+}
+
+.error-details details {
+  cursor: pointer;
+}
+
+.error-details summary {
+  color: #dc3545;
+  font-weight: 600;
+  padding: 8px;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  outline: none;
+}
+
+.error-details summary:hover {
+  background: #f1b0b7;
+}
+
+.error-list {
+  margin: 8px 0 0 0;
+  padding: 12px;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 4px;
+  list-style: none;
+}
+
+.error-list li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #c53030;
+}
+
+.error-list li:last-child {
+  margin-bottom: 0;
+}
+
+.error-list strong {
+  color: #742a2a;
 }
 
 /* Responsive Design */
@@ -304,6 +531,36 @@
     margin: 0 20px 16px;
     padding: 10px 16px;
   }
+
+  /* Responsive Config Actions */
+  .agent-config-section .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .config-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .generate-config-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .cancel-btn,
+  .retry-btn,
+  .download-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .progress-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -334,6 +591,28 @@
     margin: 0 16px 12px;
     padding: 8px 12px;
     font-size: 14px;
+  }
+
+  /* Mobile Config Actions */
+  .config-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .generate-config-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .processing-controls {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cancel-btn,
+  .retry-btn,
+  .download-btn {
+    flex: 1;
   }
 }
 

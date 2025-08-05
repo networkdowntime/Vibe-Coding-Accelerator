@@ -49,7 +49,84 @@
       
       <!-- AI Agent Configuration Section -->
       <section class="agent-config-section">
-        <h2>AI Agent Configuration</h2>
+        <div class="section-header">
+          <h2>AI Agent Configuration</h2>
+          <div class="config-actions">
+            <!-- Generate Config Button -->
+            <button 
+              *ngIf="!processingState.isProcessing"
+              [disabled]="!canGenerateConfig"
+              (click)="generateConfig()"
+              class="btn btn-primary generate-config-btn"
+              [class.disabled]="!canGenerateConfig"
+              title="{{ canGenerateConfig ? 'Generate AI agent configuration files' : 'Select an AI agent and at least one tech stack to enable' }}"
+              type="button">
+              <i class="fas fa-magic"></i>
+              Generate AI Agent Config
+            </button>
+            
+            <!-- Processing Controls -->
+            <div *ngIf="processingState.isProcessing" class="processing-controls">
+              <button 
+                (click)="cancelConfigGeneration()"
+                class="btn btn-secondary cancel-btn"
+                type="button">
+                <i class="fas fa-stop"></i>
+                Cancel
+              </button>
+            </div>
+            
+            <!-- Retry Button for Failed Jobs -->
+            <button 
+              *ngIf="processingState.currentJob?.status === 'failed'"
+              (click)="retryConfigGeneration()"
+              class="btn btn-warning retry-btn"
+              type="button">
+              <i class="fas fa-redo"></i>
+              Retry
+            </button>
+            
+            <!-- Download Results Button -->
+            <button 
+              *ngIf="processingState.currentJob?.status === 'completed'"
+              (click)="downloadResults()"
+              class="btn btn-success download-btn"
+              type="button">
+              <i class="fas fa-download"></i>
+              Download Results
+            </button>
+          </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div *ngIf="processingState.isProcessing || processingState.currentJob" class="progress-section">
+          <div class="progress-info">
+            <span class="progress-status">
+              {{ processingState.currentJob?.status === 'pending' ? 'Preparing...' : 
+                 processingState.currentJob?.status === 'processing' ? 'Processing files...' :
+                 processingState.currentJob?.status === 'completed' ? 'Completed successfully!' :
+                 processingState.currentJob?.status === 'failed' ? 'Processing failed' :
+                 processingState.currentJob?.status === 'cancelled' ? 'Processing cancelled' : 'Unknown status' }}
+            </span>
+            <span *ngIf="processingState.currentJob?.progress" class="progress-details">
+              Processing files...
+            </span>
+          </div>
+          
+          <div class="progress-bar-container">
+            <div class="progress-bar" 
+                 [style.width.%]="processingState.currentJob?.progress?.percentage || 0"
+                 [class.success]="processingState.currentJob?.status === 'completed'"
+                 [class.error]="processingState.currentJob?.status === 'failed'"
+                 [class.warning]="processingState.currentJob?.status === 'cancelled'">
+            </div>
+          </div>
+          
+          <div *ngIf="processingState.currentJob?.progress?.current" class="current-file">
+            Currently processing: <code>{{ processingState.currentJob?.progress?.current }}</code>
+          </div>
+        </div>
+        
         <app-agent-select 
           [projectName]="projectId || ''"
           (agentChanged)="onAgentChanged($event)"
