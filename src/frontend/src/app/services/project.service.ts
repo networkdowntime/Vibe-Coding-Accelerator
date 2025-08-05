@@ -27,11 +27,36 @@ export interface UpdateProjectRequest {
 }
 
 export interface ProjectListResponse {
-  projects: Project[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: Project[];
+  meta: {
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      itemsPerPage: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+      startIndex: number;
+      endIndex: number;
+    };
+    filters: {
+      sortBy: string;
+      sortOrder: string;
+    };
+  };
+  timestamp: string;
+}
+
+export interface SingleProjectResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: Project;
+  meta: {};
+  timestamp: string;
 }
 
 @Injectable({
@@ -77,8 +102,8 @@ export class ProjectService {
 
     return this.http.get<ProjectListResponse>(this.baseUrl, { params: httpParams }).pipe(
       tap(response => {
-        // Filter out deleted projects
-        const activeProjects = response.projects.filter(p => !p.deletedAt);
+        // Filter out deleted projects from the data array
+        const activeProjects = response.data.filter((p: Project) => !p.deletedAt);
         this._projects.set(activeProjects);
         this._loading.set(false);
       }),
@@ -94,7 +119,8 @@ export class ProjectService {
    * Get a specific project by ID
    */
   getProject(id: string): Observable<Project> {
-    return this.http.get<Project>(`${this.baseUrl}/${id}`).pipe(
+    return this.http.get<SingleProjectResponse>(`${this.baseUrl}/${id}`).pipe(
+      map(response => response.data),
       catchError(error => {
         this._error.set(this.getErrorMessage(error));
         return throwError(() => error);
@@ -109,7 +135,8 @@ export class ProjectService {
     this._loading.set(true);
     this._error.set(null);
 
-    return this.http.post<Project>(this.baseUrl, projectData).pipe(
+    return this.http.post<SingleProjectResponse>(this.baseUrl, projectData).pipe(
+      map(response => response.data),
       tap(newProject => {
         // Add the new project to the current list
         const currentProjects = this._projects();
@@ -131,7 +158,8 @@ export class ProjectService {
     this._loading.set(true);
     this._error.set(null);
 
-    return this.http.put<Project>(`${this.baseUrl}/${id}`, updates).pipe(
+    return this.http.put<SingleProjectResponse>(`${this.baseUrl}/${id}`, updates).pipe(
+      map(response => response.data),
       tap(updatedProject => {
         // Update the project in the current list
         const currentProjects = this._projects();
@@ -156,7 +184,8 @@ export class ProjectService {
     this._loading.set(true);
     this._error.set(null);
 
-    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
+    return this.http.delete<{success: boolean, message: string}>(`${this.baseUrl}/${id}`).pipe(
+      map(() => void 0), // Convert to void since we don't need the response data
       tap(() => {
         // Remove the project from the current list
         const currentProjects = this._projects();

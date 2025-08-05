@@ -12,6 +12,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FileListComponent } from '../file-list/file-list.component';
+import { AgentSelectComponent } from '../agent-select/agent-select.component';
 
 interface ProjectDetails {
   id: string;
@@ -59,7 +60,8 @@ interface ProjectTask {
     MatSelectModule,
     MatChipsModule,
     MatProgressBarModule,
-    FileListComponent
+    FileListComponent,
+    AgentSelectComponent
   ],
   template: `
     <div class="project-container" *ngIf="project">
@@ -188,6 +190,13 @@ interface ProjectTask {
         <mat-tab label="Files">
           <div class="tab-content">
             <app-file-list [projectId]="project.id"></app-file-list>
+          </div>
+        </mat-tab>
+
+        <!-- AI Agents Tab -->
+        <mat-tab label="AI Config">
+          <div class="tab-content">
+            <app-agent-select [projectId]="project.id"></app-agent-select>
           </div>
         </mat-tab>
 

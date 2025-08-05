@@ -19,11 +19,11 @@ const router = express.Router();
 
 /**
  * Files Routes for Project File Management
- * All routes are prefixed with /api/projects/:projectId/files
+ * All routes are prefixed with /api/v1/files
  */
 
 /**
- * @route   GET /api/projects/:projectId/files
+ * @route   GET /api/v1/files/projects/:projectId
  * @desc    Get all files for a project
  * @access  Public (will be protected with auth later)
  * @params  {string} projectId - Project UUID
@@ -31,55 +31,55 @@ const router = express.Router();
  * @query   {number} limit - Items per page (default: 20)
  */
 router.get(
-  '/',
+  '/projects/:projectId',
   validateProjectId,
   asyncHandler(getProjectFiles)
 );
 
 /**
- * @route   GET /api/projects/:projectId/files/:fileId
+ * @route   GET /api/v1/files/projects/:projectId/:fileId
  * @desc    Get file metadata by ID
  * @access  Public (will be protected with auth later)
  * @params  {string} projectId - Project UUID
  * @params  {string} fileId - File identifier
  */
 router.get(
-  '/:fileId',
+  '/projects/:projectId/:fileId',
   validateProjectId,
   validateFileId,
   asyncHandler(getFileById)
 );
 
 /**
- * @route   GET /api/projects/:projectId/files/:fileId/content
+ * @route   GET /api/v1/files/projects/:projectId/:fileId/content
  * @desc    Get file content
  * @access  Public (will be protected with auth later)
  * @params  {string} projectId - Project UUID
  * @params  {string} fileId - File identifier
  */
 router.get(
-  '/:fileId/content',
+  '/projects/:projectId/:fileId/content',
   validateProjectId,
   validateFileId,
   asyncHandler(getFileContent)
 );
 
 /**
- * @route   GET /api/projects/:projectId/files/:fileId/download
+ * @route   GET /api/v1/files/projects/:projectId/:fileId/download
  * @desc    Download file
  * @access  Public (will be protected with auth later)
  * @params  {string} projectId - Project UUID
  * @params  {string} fileId - File identifier
  */
 router.get(
-  '/:fileId/download',
+  '/projects/:projectId/:fileId/download',
   validateProjectId,
   validateFileId,
   asyncHandler(downloadFile)
 );
 
 /**
- * @route   POST /api/projects/:projectId/files/upload
+ * @route   POST /api/v1/files/projects/:projectId/upload
  * @desc    Upload files to project
  * @access  Public (will be protected with auth later)
  * @params  {string} projectId - Project UUID
@@ -87,7 +87,7 @@ router.get(
  * @body    {string} description - Optional description for uploaded files
  */
 router.post(
-  '/upload',
+  '/projects/:projectId/upload',
   validateProjectId,
   uploadMiddleware.array('files', 10), // Max 10 files per upload
   validateFileUpload,
@@ -95,14 +95,14 @@ router.post(
 );
 
 /**
- * @route   DELETE /api/projects/:projectId/files/:fileId
+ * @route   DELETE /api/v1/files/projects/:projectId/:fileId
  * @desc    Delete file by ID
  * @access  Public (will be protected with auth later)
  * @params  {string} projectId - Project UUID
  * @params  {string} fileId - File identifier
  */
 router.delete(
-  '/:fileId',
+  '/projects/:projectId/:fileId',
   validateProjectId,
   validateFileId,
   asyncHandler(deleteFileById)

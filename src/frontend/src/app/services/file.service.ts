@@ -6,25 +6,129 @@ import { environment } from '../../environments/environment';
 
 export interface ProjectFile {
   id: string;
-  filename: string;
-  size: number;
+  name: string;
+  originalName: string;
   type: string;
+  mimeType: string;
+  size: number;
+  formattedSize: string;
   uploadDate: string;
-  path: string;
+  modifiedDate: string;
+  status: string;
+  path?: string;
+  description?: string;
+}
+
+export interface FileListResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: ProjectFile[];
+  meta: {
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      itemsPerPage: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+  };
+  timestamp: string;
+}
+
+export interface SingleFileResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: ProjectFile;
+  meta: {};
+  timestamp: string;
+}
+
+export interface FileContentResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    content: string;
+    mimeType: string;
+    encoding: string;
+  };
+  meta: {};
+  timestamp: string;
+}
+
+export interface FileUploadResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: ProjectFile[];
+  meta: {};
+  timestamp: string;
 }
 
 export interface FileUploadProgress {
-  filename: string;
+  name: string;
   progress: number;
   status: 'uploading' | 'complete' | 'error';
   error?: string;
+}
+
+export interface FilesListResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: ProjectFile[];
+  meta: {
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      itemsPerPage: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+  };
+  timestamp: string;
+}
+
+export interface SingleFileResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: ProjectFile;
+  meta: {};
+  timestamp: string;
+}
+
+export interface FileContentResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    content: string;
+    mimeType: string;
+    encoding: string;
+  };
+  meta: {};
+  timestamp: string;
+}
+
+export interface FileUploadResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: ProjectFile[];
+  meta: {};
+  timestamp: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileService {
-  private apiUrl = `${environment.apiUrl}/projects`;
+  private readonly baseUrl = 'http://localhost:3001/api/v1/files/projects';
   
   // Signal-based state management
   public files = signal<ProjectFile[]>([]);
@@ -35,13 +139,11 @@ export class FileService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Get all files for a specific project
+   * Get all files for a project
    */
   getProjectFiles(projectId: string): Observable<ProjectFile[]> {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    return this.http.get<ProjectFile[]>(`${this.apiUrl}/${projectId}/files`).pipe(
+    return this.http.get<FilesListResponse>(`${this.baseUrl}/${projectId}`).pipe(
+      map(response => response.data),
       tap(files => {
         this.files.set(files);
         this.isLoading.set(false);
@@ -69,18 +171,18 @@ export class FileService {
 
     // Initialize progress tracking
     const initialProgress: FileUploadProgress[] = fileArray.map(file => ({
-      filename: file.name,
+      name: file.name,
       progress: 0,
       status: 'uploading'
     }));
     
     this.uploadProgress.set(initialProgress);
 
-    return this.http.post<any>(`${this.apiUrl}/${projectId}/files/upload`, formData, {
+    return this.http.post<FileUploadResponse>(`${this.baseUrl}/${projectId}/upload`, formData, {
       reportProgress: true,
       observe: 'events'
     }).pipe(
-      map((event: HttpEvent<any>) => {
+      map((event: HttpEvent<FileUploadResponse>) => {
         switch (event.type) {
           case HttpEventType.UploadProgress:
             if (event.total) {
@@ -125,7 +227,8 @@ export class FileService {
    * Delete a file from a project
    */
   deleteFile(projectId: string, fileId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${projectId}/files/${fileId}`).pipe(
+    return this.http.delete<{success: boolean; message: string}>(`${this.baseUrl}/${projectId}/${fileId}`).pipe(
+      map(() => void 0), // Convert to void since we don't need the response data
       tap(() => {
         // Remove file from current list
         const currentFiles = this.files();
@@ -144,9 +247,8 @@ export class FileService {
    * Get file content for viewing
    */
   getFileContent(projectId: string, fileId: string): Observable<string> {
-    return this.http.get(`${this.apiUrl}/${projectId}/files/${fileId}/content`, {
-      responseType: 'text'
-    }).pipe(
+    return this.http.get<FileContentResponse>(`${this.baseUrl}/${projectId}/${fileId}/content`).pipe(
+      map(response => response.data.content),
       catchError(error => {
         const errorMessage = this.getErrorMessage(error);
         this.error.set(errorMessage);
@@ -159,7 +261,7 @@ export class FileService {
    * Download a file
    */
   downloadFile(projectId: string, fileId: string, filename: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${projectId}/files/${fileId}/download`, {
+    return this.http.get(`${this.baseUrl}/${projectId}/${fileId}/download`, {
       responseType: 'blob'
     }).pipe(
       tap(blob => {
@@ -183,9 +285,10 @@ export class FileService {
    * Rename a file (future implementation)
    */
   renameFile(projectId: string, fileId: string, newName: string): Observable<ProjectFile> {
-    return this.http.patch<ProjectFile>(`${this.apiUrl}/${projectId}/files/${fileId}`, {
-      filename: newName
+    return this.http.patch<SingleFileResponse>(`${this.baseUrl}/${projectId}/${fileId}`, {
+      name: newName
     }).pipe(
+      map(response => response.data),
       tap(updatedFile => {
         // Update file in current list
         const currentFiles = this.files();

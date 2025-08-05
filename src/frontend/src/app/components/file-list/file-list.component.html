@@ -64,7 +64,7 @@
         class="progress-item"
         *ngFor="let progress of uploadProgress()">
         <div class="progress-info">
-          <span class="filename">{{ progress.filename }}</span>
+          <span class="filename">{{ progress.name }}</span>
           <span class="status" [class]="'status-' + progress.status">
             {{ progress.status }}
           </span>
@@ -111,11 +111,11 @@
         class="file-card"
         *ngFor="let file of files()">
         <div class="file-icon">
-          <i class="material-icons">{{ getFileIcon(file.filename) }}</i>
+          <i class="material-icons">{{ getFileIcon(file.name) }}</i>
         </div>
         <div class="file-info">
-          <div class="file-name" [title]="file.filename">
-            {{ file.filename }}
+          <div class="file-name" [title]="file.name">
+            {{ file.name }}
           </div>
           <div class="file-meta">
             <span class="file-size">{{ formatFileSize(file.size) }}</span>
@@ -126,9 +126,9 @@
           <button 
             class="btn-icon"
             (click)="viewFile(file)"
-            [title]="isFileViewable(file.filename) ? 'View file' : 'Download file'">
+            [title]="isFileViewable(file.name) ? 'View file' : 'Download file'">
             <i class="material-icons">
-              {{ isFileViewable(file.filename) ? 'visibility' : 'download' }}
+              {{ isFileViewable(file.name) ? 'visibility' : 'download' }}
             </i>
           </button>
           <button 
@@ -152,7 +152,7 @@
   <div class="modal" *ngIf="showFileViewer()" (click)="closeFileViewer()" (keydown.escape)="closeFileViewer()">
     <div class="modal-content file-viewer" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
       <div class="modal-header">
-        <h4>{{ selectedFile()?.filename }}</h4>
+        <h4>{{ selectedFile()?.name }}</h4>
         <button class="btn-close" (click)="closeFileViewer()">
           <i class="material-icons">close</i>
         </button>
@@ -183,7 +183,7 @@
         <h4>Confirm Delete</h4>
       </div>
       <div class="modal-body">
-        <p>Are you sure you want to delete <strong>{{ fileToDelete()?.filename }}</strong>?</p>
+        <p>Are you sure you want to delete <strong>{{ fileToDelete()?.name }}</strong>?</p>
         <p class="warning">This action cannot be undone.</p>
       </div>
       <div class="modal-footer">
@@ -224,7 +224,7 @@
         <button 
           class="btn btn-primary"
           (click)="renameFile()"
-          [disabled]="!newFileName().trim() || newFileName() === fileToRename()?.filename">
+          [disabled]="!newFileName().trim() || newFileName() === fileToRename()?.name">
           <i class="material-icons">save</i>
           Rename
         </button>

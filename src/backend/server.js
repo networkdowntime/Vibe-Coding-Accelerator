@@ -11,6 +11,7 @@ import { fileURLToPath } from 'url';
 import projectRoutes from './routes/projects.js';
 import fileRoutes from './routes/files.js';
 import healthRoutes from './routes/health.js';
+import agentRoutes from './routes/agents.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -67,7 +68,8 @@ app.use(requestLogger);
 // API routes
 app.use('/api/v1/health', healthRoutes);
 app.use('/api/v1/projects', projectRoutes);
-app.use('/api/v1/projects/:projectId/files', fileRoutes);
+app.use('/api/v1/files', fileRoutes);
+app.use('/api/v1/agents', agentRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -78,7 +80,8 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/api/v1/health',
       projects: '/api/v1/projects',
-      files: '/api/v1/files'
+      files: '/api/v1/files',
+      agents: '/api/v1/agents'
     }
   });
 });
@@ -91,7 +94,8 @@ app.use('*', (req, res) => {
     availableRoutes: [
       '/api/v1/health',
       '/api/v1/projects',
-      '/api/v1/files'
+      '/api/v1/files',
+      '/api/v1/agents'
     ]
   });
 });

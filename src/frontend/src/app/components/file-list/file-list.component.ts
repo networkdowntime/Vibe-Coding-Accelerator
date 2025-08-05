@@ -126,7 +126,7 @@ export class FileListComponent implements OnInit, OnDestroy {
    * View file content
    */
   viewFile(file: ProjectFile): void {
-    if (this.fileService.isFileViewable(file.filename)) {
+    if (this.fileService.isFileViewable(file.name)) {
       this.selectedFile.set(file);
       this.fileService.getFileContent(this.projectId, file.id)
         .pipe(takeUntil(this.destroy$))
@@ -149,7 +149,7 @@ export class FileListComponent implements OnInit, OnDestroy {
    * Download file
    */
   downloadFile(file: ProjectFile): void {
-    this.fileService.downloadFile(this.projectId, file.id, file.filename)
+    this.fileService.downloadFile(this.projectId, file.id, file.name)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         error: (error) => {
@@ -191,7 +191,7 @@ export class FileListComponent implements OnInit, OnDestroy {
    */
   startRenameFile(file: ProjectFile): void {
     this.fileToRename.set(file);
-    this.newFileName.set(file.filename);
+    this.newFileName.set(file.name);
     this.showRenameDialog.set(true);
   }
 
@@ -202,7 +202,7 @@ export class FileListComponent implements OnInit, OnDestroy {
     const file = this.fileToRename();
     const newName = this.newFileName().trim();
     
-    if (file && newName && newName !== file.filename) {
+    if (file && newName && newName !== file.name) {
       this.fileService.renameFile(this.projectId, file.id, newName)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
