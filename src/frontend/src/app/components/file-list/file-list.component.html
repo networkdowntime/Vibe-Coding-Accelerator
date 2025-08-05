@@ -1,0 +1,239 @@
+<div class="file-list-container">
+  <!-- Header Section -->
+  <div class="file-list-header">
+    <h3>Project Files</h3>
+    <div class="header-actions">
+      <button 
+        class="btn btn-primary"
+        (click)="toggleUploadArea()"
+        [disabled]="isUploading()">
+        <i class="material-icons">cloud_upload</i>
+        Upload Files
+      </button>
+      <button 
+        class="btn btn-secondary"
+        (click)="loadFiles()"
+        [disabled]="isLoading()">
+        <i class="material-icons">refresh</i>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Display -->
+  <div class="error-message" *ngIf="error()">
+    <div class="alert alert-error">
+      <i class="material-icons">error</i>
+      <span>{{ error() }}</span>
+      <button class="btn-close" (click)="clearError()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Upload Area -->
+  <div class="upload-area" *ngIf="showUploadArea()">
+    <div 
+      class="drop-zone"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onFileDrop($event)">
+      <div class="drop-zone-content">
+        <i class="material-icons">cloud_upload</i>
+        <p>Drag & drop files here or click to select</p>
+        <p class="file-types">Supported: .txt, .md, .yml, .html, .pdf, .json, .js, .ts</p>
+        <input 
+          type="file" 
+          id="file-input"
+          multiple
+          accept=".txt,.md,.yml,.yaml,.html,.pdf,.json,.js,.ts,.css"
+          (change)="onFileSelected($event)"
+          hidden>
+        <label for="file-input" class="btn btn-outline">
+          Choose Files
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Progress -->
+  <div class="upload-progress" *ngIf="uploadProgress().length > 0">
+    <h4>Upload Progress</h4>
+    <div class="progress-list">
+      <div 
+        class="progress-item"
+        *ngFor="let progress of uploadProgress()">
+        <div class="progress-info">
+          <span class="filename">{{ progress.filename }}</span>
+          <span class="status" [class]="'status-' + progress.status">
+            {{ progress.status }}
+          </span>
+        </div>
+        <div class="progress-bar">
+          <div 
+            class="progress-fill"
+            [style.width.%]="progress.progress"
+            [class]="'fill-' + progress.status">
+          </div>
+        </div>
+        <div class="progress-text">{{ progress.progress }}%</div>
+        <div class="error-text" *ngIf="progress.error">
+          {{ progress.error }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div class="loading-indicator" *ngIf="isLoading()">
+    <div class="spinner"></div>
+    <span>Loading files...</span>
+  </div>
+
+  <!-- Files List -->
+  <div class="files-container" *ngIf="!isLoading()">
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!hasFiles()">
+      <i class="material-icons">folder_open</i>
+      <h4>No files uploaded yet</h4>
+      <p>Upload your first file to get started</p>
+      <button 
+        class="btn btn-primary"
+        (click)="toggleUploadArea()">
+        <i class="material-icons">add</i>
+        Upload Files
+      </button>
+    </div>
+
+    <!-- Files Grid -->
+    <div class="files-grid" *ngIf="hasFiles()">
+      <div 
+        class="file-card"
+        *ngFor="let file of files()">
+        <div class="file-icon">
+          <i class="material-icons">{{ getFileIcon(file.filename) }}</i>
+        </div>
+        <div class="file-info">
+          <div class="file-name" [title]="file.filename">
+            {{ file.filename }}
+          </div>
+          <div class="file-meta">
+            <span class="file-size">{{ formatFileSize(file.size) }}</span>
+            <span class="file-date">{{ formatDate(file.uploadDate) }}</span>
+          </div>
+        </div>
+        <div class="file-actions">
+          <button 
+            class="btn-icon"
+            (click)="viewFile(file)"
+            [title]="isFileViewable(file.filename) ? 'View file' : 'Download file'">
+            <i class="material-icons">
+              {{ isFileViewable(file.filename) ? 'visibility' : 'download' }}
+            </i>
+          </button>
+          <button 
+            class="btn-icon"
+            (click)="startRenameFile(file)"
+            title="Rename file">
+            <i class="material-icons">edit</i>
+          </button>
+          <button 
+            class="btn-icon btn-danger"
+            (click)="confirmDeleteFile(file)"
+            title="Delete file">
+            <i class="material-icons">delete</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Viewer Modal -->
+  <div class="modal" *ngIf="showFileViewer()" (click)="closeFileViewer()" (keydown.escape)="closeFileViewer()">
+    <div class="modal-content file-viewer" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h4>{{ selectedFile()?.filename }}</h4>
+        <button class="btn-close" (click)="closeFileViewer()">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre class="file-content">{{ fileContent() }}</pre>
+      </div>
+      <div class="modal-footer">
+        <button 
+          class="btn btn-secondary"
+          (click)="downloadFile(selectedFile()!)">
+          <i class="material-icons">download</i>
+          Download
+        </button>
+        <button 
+          class="btn btn-outline"
+          (click)="closeFileViewer()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal" *ngIf="showDeleteConfirmation()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Confirm Delete</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong>{{ fileToDelete()?.filename }}</strong>?</p>
+        <p class="warning">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button 
+          class="btn btn-danger"
+          (click)="deleteFile()">
+          <i class="material-icons">delete</i>
+          Delete
+        </button>
+        <button 
+          class="btn btn-outline"
+          (click)="cancelDelete()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename Dialog Modal -->
+  <div class="modal" *ngIf="showRenameDialog()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Rename File</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="new-filename">New filename:</label>
+          <input 
+            type="text"
+            id="new-filename"
+            class="form-control"
+            [(ngModel)]="newFileName"
+            (keyup.enter)="renameFile()"
+            (keyup.escape)="cancelRename()">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button 
+          class="btn btn-primary"
+          (click)="renameFile()"
+          [disabled]="!newFileName().trim() || newFileName() === fileToRename()?.filename">
+          <i class="material-icons">save</i>
+          Rename
+        </button>
+        <button 
+          class="btn btn-outline"
+          (click)="cancelRename()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

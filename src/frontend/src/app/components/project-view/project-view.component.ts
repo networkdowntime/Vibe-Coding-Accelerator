@@ -11,6 +11,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FileListComponent } from '../file-list/file-list.component';
 
 interface ProjectDetails {
   id: string;
@@ -57,7 +58,8 @@ interface ProjectTask {
     MatInputModule,
     MatSelectModule,
     MatChipsModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    FileListComponent
   ],
   template: `
     <div class="project-container" *ngIf="project">
@@ -185,50 +187,7 @@ interface ProjectTask {
         <!-- Files Tab -->
         <mat-tab label="Files">
           <div class="tab-content">
-            <div class="files-header">
-              <h3>Project Files</h3>
-              <button mat-raised-button color="primary">
-                <mat-icon>upload</mat-icon>
-                Upload Files
-              </button>
-            </div>
-
-            <div class="files-list" *ngIf="project.files.length > 0">
-              <mat-card *ngFor="let file of project.files" class="file-card">
-                <mat-card-content>
-                  <div class="file-info">
-                    <mat-icon class="file-icon">{{ getFileIcon(file.type) }}</mat-icon>
-                    <div class="file-details">
-                      <h4>{{ file.name }}</h4>
-                      <p>{{ formatFileSize(file.size) }} • {{ file.uploadDate | date:'short' }}</p>
-                    </div>
-                    <div class="file-status">
-                      <span class="status-indicator" [class]="'status-' + file.status">
-                        {{ file.status | titlecase }}
-                      </span>
-                    </div>
-                    <div class="file-actions">
-                      <button mat-icon-button>
-                        <mat-icon>download</mat-icon>
-                      </button>
-                      <button mat-icon-button color="warn">
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </div>
-
-            <div class="empty-state" *ngIf="project.files.length === 0">
-              <mat-icon class="empty-icon">cloud_upload</mat-icon>
-              <h3>No files uploaded</h3>
-              <p>Upload project files to get started with AI-powered analysis</p>
-              <button mat-raised-button color="primary">
-                <mat-icon>upload</mat-icon>
-                Upload Your First File
-              </button>
-            </div>
+            <app-file-list [projectId]="project.id"></app-file-list>
           </div>
         </mat-tab>
 
