@@ -130,8 +130,9 @@ describe('Agent Routes', () => {
         .expect(200);
 
       expect(response.body).toEqual({
-        message: 'Tech stack saved successfully',
-        techStack
+        message: 'Project configuration saved successfully',
+        techStack,
+        aiAgent: undefined
       });
 
       expect(fs.mkdir).toHaveBeenCalledWith(
@@ -139,8 +140,8 @@ describe('Agent Routes', () => {
         { recursive: true }
       );
       expect(fs.writeFile).toHaveBeenCalledWith(
-        expect.stringContaining('techstack.txt'),
-        'javascript\ntypescript\nangular',
+        expect.stringContaining('project-config.json'),
+        expect.stringContaining('"tech-stack": [\n    "javascript",\n    "typescript",\n    "angular"\n  ]'),
         'utf8'
       );
     });
@@ -162,7 +163,7 @@ describe('Agent Routes', () => {
         .send({ techStack: ['javascript'] })
         .expect(500);
 
-      expect(response.body.error).toBe('Failed to save tech stack');
+      expect(response.body.error).toBe('Failed to save project configuration');
     });
   });
 
@@ -175,7 +176,8 @@ describe('Agent Routes', () => {
         .expect(200);
 
       expect(response.body).toEqual({
-        techStack: ['javascript', 'typescript', 'angular']
+        techStack: ['javascript', 'typescript', 'angular'],
+        aiAgent: null
       });
     });
 
@@ -188,7 +190,10 @@ describe('Agent Routes', () => {
         .get('/api/projects/myProject/tech-stack')
         .expect(200);
 
-      expect(response.body).toEqual({ techStack: [] });
+      expect(response.body).toEqual({ 
+        techStack: [],
+        aiAgent: null 
+      });
     });
 
     it('should handle empty lines in tech stack file', async () => {
@@ -199,7 +204,8 @@ describe('Agent Routes', () => {
         .expect(200);
 
       expect(response.body).toEqual({
-        techStack: ['javascript', 'typescript', 'angular']
+        techStack: ['javascript', 'typescript', 'angular'],
+        aiAgent: null
       });
     });
 
@@ -210,7 +216,7 @@ describe('Agent Routes', () => {
         .get('/api/projects/myProject/tech-stack')
         .expect(500);
 
-      expect(response.body.error).toBe('Failed to load tech stack');
+      expect(response.body.error).toBe('Failed to load project configuration');
     });
   });
 });

@@ -1,0 +1,7 @@
+{
+  "ai-agent": "githubCopilot",
+  "tech-stack": [
+    "rust",
+    "vuejs"
+  ]
+}

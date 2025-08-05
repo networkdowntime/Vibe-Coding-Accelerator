@@ -5,7 +5,7 @@ import { FileListComponent } from '../file-list/file-list.component';
 import { AgentSelectComponent } from '../agent-select/agent-select.component';
 import { ProjectModalComponent, ProjectModalData, ProjectModalResult } from '../project-modal/project-modal.component';
 import { Agent } from '../../services/agent.service';
-import { ProjectService, Project } from '../../services/project.service';
+import { ProjectService } from '../../services/project.service';
 
 @Component({
   selector: 'app-project-view',
@@ -16,7 +16,6 @@ import { ProjectService, Project } from '../../services/project.service';
 })
 export class ProjectViewComponent implements OnInit {
   projectId: string | null = null;
-  project: Project | null = null;
   errorMessage: string = '';
   selectedAgent: Agent | null = null;
   selectedTechStack: string[] = [];
@@ -33,29 +32,6 @@ export class ProjectViewComponent implements OnInit {
   
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('id');
-    if (this.projectId) {
-      this.loadProject();
-    }
-  }
-
-  /**
-   * Load project data
-   */
-  private loadProject(): void {
-    if (!this.projectId) return;
-    
-    this.projectService.getProject(this.projectId).subscribe({
-      next: (project) => {
-        this.project = project;
-        if (!project) {
-          this.errorMessage = `Project '${this.projectId}' not found`;
-        }
-      },
-      error: (error) => {
-        console.error('Error loading project:', error);
-        this.errorMessage = 'Failed to load project data';
-      }
-    });
   }
 
   /**
@@ -116,56 +92,15 @@ export class ProjectViewComponent implements OnInit {
    * Edit project name
    */
   editProjectName(): void {
-    if (!this.projectId || !this.project) return;
-    
-    this.modalData = {
-      mode: 'rename',
-      projectName: this.project.name,
-      projectDisplayName: this.project.displayName
-    };
-    this.showModal = true;
+    // TODO: Implement project name editing functionality
+    console.log('Edit project name clicked');
   }
 
   /**
    * Delete project
    */
   deleteProject(): void {
-    if (!this.projectId || !this.project) return;
-    
-    this.modalData = {
-      mode: 'delete',
-      projectName: this.project.name,
-      projectDisplayName: this.project.displayName
-    };
-    this.showModal = true;
-  }
-  
-  /**
-   * Handle modal results
-   */
-  onModalResult(result: ProjectModalResult): void {
-    if (result.action === 'cancel') {
-      this.showModal = false;
-      return;
-    }
-    
-    if (result.success) {
-      this.showModal = false;
-      
-      if (result.action === 'delete') {
-        // Navigate back to project list after successful deletion
-        this.router.navigate(['/']);
-      } else if (result.action === 'rename') {
-        // Navigate to the new project URL with the updated project name
-        if (result.newProjectName) {
-          // Use window.location.href for a full page reload to the new URL
-          window.location.href = `/project/${result.newProjectName}`;
-        } else {
-          // Fallback: reload the page if we don't have the new name
-          window.location.reload();
-        }
-      }
-    }
-    // If not successful, modal will show the error and stay open
+    // TODO: Implement project deletion functionality with confirmation
+    console.log('Delete project clicked');
   }
 }

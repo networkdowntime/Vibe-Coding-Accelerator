@@ -6,17 +6,7 @@
       <span class="file-count">{{ filteredFiles.length }} file{{ filteredFiles.length !== 1 ? 's' : '' }}</span>
     </div>
     
-    <div class="header-right">
-      <div class="search-box">
-        <input 
-          type="text" 
-          [(ngModel)]="searchTerm"
-          (input)="onSearchChange()"
-          placeholder="Search files..."
-          class="search-input">
-        <span class="search-icon">🔍</span>
-      </div>
-      
+    <div class="header-right">    
       <button 
         class="btn btn-primary upload-btn" 
         (click)="openUploadModal()"

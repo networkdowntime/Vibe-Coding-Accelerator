@@ -1,4 +1,0 @@
-angular
-javascript
-nodejs
-typescript

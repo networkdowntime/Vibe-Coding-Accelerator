@@ -26,7 +26,7 @@ export interface ApiError {
   providedIn: 'root'
 })
 export class ProjectService {
-  private apiUrl = 'http://localhost:3001/api/projects';
+  private apiUrl = '/api/projects';
 
   constructor(private http: HttpClient) {}
 
@@ -36,6 +36,15 @@ export class ProjectService {
   getAllProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(this.apiUrl).pipe(
       catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Get a single project by name
+   */
+  getProject(name: string): Observable<Project | null> {
+    return this.getAllProjects().pipe(
+      map(projects => projects.find(p => p.name === name) || null)
     );
   }
 

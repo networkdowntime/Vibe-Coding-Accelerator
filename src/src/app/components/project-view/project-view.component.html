@@ -7,7 +7,7 @@
             <a routerLink="/" class="text-blue-600 hover:text-blue-800">Projects</a>
           </li>
           <li class="breadcrumb-separator">/</li>
-          <li class="breadcrumb-item active">{{ projectId || 'Unknown Project' }}</li>
+          <li class="breadcrumb-item active">{{ project?.displayName || projectId || 'Unknown Project' }}</li>
         </ol>
       </nav>
       <a [routerLink]="['/settings']" [queryParams]="{ returnUrl: '/project/' + projectId }" class="settings-icon" title="Settings">
@@ -16,7 +16,7 @@
     </div>
     <div class="project-title-section">
       <div class="project-title-with-actions">
-        <h1 class="text-xl font-semibold text-gray-800">Project: {{ projectId || 'Unknown' }}</h1>
+        <h1 class="text-xl font-semibold text-gray-800">Project: {{ project?.displayName || projectId || 'Unknown' }}</h1>
         <div class="project-actions">
           <button 
             class="icon-btn edit-btn" 
@@ -70,3 +70,10 @@
     </div>
   </main>
 </div>
+
+<!-- Modal -->
+<app-project-modal 
+  *ngIf="showModal" 
+  [data]="modalData"
+  (result)="onModalResult($event)"
+></app-project-modal>

@@ -28,7 +28,7 @@
     </div>
     
     <button class="create-project-btn" (click)="openCreateModal()" [disabled]="isLoading">
-      + Create New Project
+      Create New Project
     </button>
   </div>
 
@@ -104,4 +104,5 @@
 <app-project-modal 
   *ngIf="showModal" 
   [data]="modalData"
+  (result)="onModalResult($event)"
 ></app-project-modal>

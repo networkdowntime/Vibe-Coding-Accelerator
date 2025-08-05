@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ProjectService } from '../../services/project.service';
 
 export interface ProjectModalData {
   mode: 'create' | 'rename' | 'delete';
@@ -10,7 +11,9 @@ export interface ProjectModalData {
 
 export interface ProjectModalResult {
   action: 'create' | 'rename' | 'delete' | 'cancel';
-  name?: string;
+  success?: boolean;
+  error?: string;
+  newProjectName?: string; // For rename operations, the new project name (directory name)
 }
 
 @Component({
@@ -20,12 +23,15 @@ export interface ProjectModalResult {
   templateUrl: './project-modal.component.html',
   styleUrl: './project-modal.component.scss'
 })
-export class ProjectModalComponent {
+export class ProjectModalComponent implements OnInit {
   @Input() data: ProjectModalData = { mode: 'create' };
+  @Output() result = new EventEmitter<ProjectModalResult>();
   
   projectName: string = '';
   isLoading: boolean = false;
   error: string = '';
+
+  constructor(private projectService: ProjectService) {}
 
   ngOnInit(): void {
     if (this.data.mode === 'rename' && this.data.projectDisplayName) {
@@ -70,34 +76,73 @@ export class ProjectModalComponent {
     this.isLoading = true;
     this.error = '';
 
-    // Emit result through a custom event that parent can listen to
-    const result: ProjectModalResult = {
-      action: this.data.mode,
-      name: this.data.mode !== 'delete' ? this.projectName.trim() : undefined
-    };
-
-    // Simulate the modal result being handled by parent
-    this.handleResult(result);
+    switch (this.data.mode) {
+      case 'create':
+        this.createProject();
+        break;
+      case 'rename':
+        this.renameProject();
+        break;
+      case 'delete':
+        this.deleteProject();
+        break;
+    }
   }
 
   onCancel(): void {
-    const result: ProjectModalResult = { action: 'cancel' };
-    this.handleResult(result);
+    this.result.emit({ action: 'cancel' });
   }
 
-  private handleResult(result: ProjectModalResult): void {
-    // This would typically be handled by a modal service or parent component
-    // For now, we'll use a custom event
-    const event = new CustomEvent('modalResult', { detail: result });
-    window.dispatchEvent(event);
+  private createProject(): void {
+    this.projectService.createProject(this.projectName.trim()).subscribe({
+      next: () => {
+        this.result.emit({ action: 'create', success: true });
+      },
+      error: (error) => {
+        this.error = error.message || 'Failed to create project';
+        this.isLoading = false;
+      }
+    });
   }
 
-  setLoading(loading: boolean): void {
-    this.isLoading = loading;
+  private renameProject(): void {
+    if (!this.data.projectName) {
+      this.error = 'Original project name is missing';
+      this.isLoading = false;
+      return;
+    }
+
+    this.projectService.renameProject(this.data.projectName, this.projectName.trim()).subscribe({
+      next: (updatedProject) => {
+        this.result.emit({ 
+          action: 'rename', 
+          success: true, 
+          newProjectName: updatedProject.name 
+        });
+      },
+      error: (error) => {
+        this.error = error.message || 'Failed to rename project';
+        this.isLoading = false;
+      }
+    });
   }
 
-  setError(error: string): void {
-    this.error = error;
-    this.isLoading = false;
+  private deleteProject(): void {
+    if (!this.data.projectName) {
+      this.error = 'Project name is missing';
+      this.isLoading = false;
+      return;
+    }
+
+    this.projectService.deleteProject(this.data.projectName).subscribe({
+      next: () => {
+        this.result.emit({ action: 'delete', success: true });
+      },
+      error: (error) => {
+        this.error = error.message || 'Failed to delete project';
+        this.isLoading = false;
+      }
+    });
   }
+
 }

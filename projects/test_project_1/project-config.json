@@ -1,0 +1,9 @@
+{
+  "tech-stack": [
+    "angular",
+    "javascript",
+    "nodejs",
+    "typescript"
+  ],
+  "ai-agent": "githubCopilot"
+}

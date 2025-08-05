@@ -37,10 +37,9 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
   constructor(private agentService: AgentService) {}
 
   ngOnInit(): void {
-    this.loadAgents();
-    this.loadProjectTechStack();
     this.setupTechStackFiltering();
     this.setupAgentServiceSubscriptions();
+    this.loadAgents();
   }
 
   ngOnDestroy(): void {
@@ -59,6 +58,8 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
         next: (agents) => {
           this.availableAgents = agents;
           this.isLoadingAgents = false;
+          // Load project configuration after agents are available
+          this.loadProjectTechStack();
         },
         error: (error) => {
           console.error('Error loading agents:', error);
@@ -69,7 +70,7 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Load project's current tech stack
+   * Load project's current tech stack and AI agent
    */
   private loadProjectTechStack(): void {
     if (!this.projectName) return;
@@ -77,14 +78,25 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
     this.agentService.getProjectTechStack(this.projectName)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (techStack) => {
-          this.selectedTechStacks = techStack;
-          this.agentService.setSelectedTechStack(techStack);
-          this.techStackChanged.emit(techStack);
+        next: (config) => {
+          this.selectedTechStacks = config.techStack;
+          this.agentService.setSelectedTechStack(config.techStack);
+          this.techStackChanged.emit(config.techStack);
+
+          // Load and set the AI agent if it exists
+          if (config.aiAgent) {
+            const agent = this.availableAgents.find(a => a.id === config.aiAgent);
+            if (agent) {
+              this.selectedAgent = agent;
+              this.agentService.setSelectedAgent(agent);
+              this.agentChanged.emit(agent);
+              this.loadTechStacks(agent.id);
+            }
+          }
         },
         error: (error) => {
-          console.error('Error loading project tech stack:', error);
-          this.error.emit('Failed to load project tech stack');
+          console.error('Error loading project configuration:', error);
+          this.error.emit('Failed to load project configuration');
         }
       });
   }
@@ -95,6 +107,11 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
   onAgentChange(): void {
     this.agentService.setSelectedAgent(this.selectedAgent);
     this.agentChanged.emit(this.selectedAgent);
+    
+    // Save AI agent selection to project
+    if (this.projectName && this.selectedAgent) {
+      this.saveAiAgent(this.selectedAgent.id);
+    }
     
     if (this.selectedAgent) {
       this.loadTechStacks(this.selectedAgent.id);
@@ -219,7 +236,8 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
    * Save tech stack to project
    */
   private saveTechStack(): void {
-    this.agentService.saveTechStack(this.projectName, this.selectedTechStacks)
+    const aiAgent = this.selectedAgent?.id || undefined;
+    this.agentService.saveTechStack(this.projectName, this.selectedTechStacks, aiAgent)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -228,6 +246,23 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error saving tech stack:', error);
           this.error.emit('Failed to save tech stack');
+        }
+      });
+  }
+
+  /**
+   * Save AI agent selection to project
+   */
+  private saveAiAgent(aiAgent: string): void {
+    this.agentService.saveAiAgent(this.projectName, aiAgent)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          console.log('AI agent saved:', response.message);
+        },
+        error: (error) => {
+          console.error('Error saving AI agent:', error);
+          this.error.emit('Failed to save AI agent');
         }
       });
   }

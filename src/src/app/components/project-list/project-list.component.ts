@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -12,7 +12,7 @@ import { ProjectModalComponent, ProjectModalData, ProjectModalResult } from '../
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.scss'
 })
-export class ProjectListComponent implements OnInit {
+export class ProjectListComponent implements OnInit, OnDestroy {
   projects: Project[] = [];
   filteredProjects: Project[] = [];
   searchQuery: string = '';
@@ -31,13 +31,10 @@ export class ProjectListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProjects();
-    
-    // Listen for modal results
-    window.addEventListener('modalResult', this.handleModalResult.bind(this));
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('modalResult', this.handleModalResult.bind(this));
+    // No longer needed as we're using Output binding
   }
 
   /**
@@ -142,91 +139,17 @@ export class ProjectListComponent implements OnInit {
   /**
    * Handle modal results
    */
-  private handleModalResult(event: any): void {
-    const result = event.detail as ProjectModalResult;
-    
+  onModalResult(result: ProjectModalResult): void {
     if (result.action === 'cancel') {
       this.showModal = false;
       return;
     }
 
-    // Get modal component reference to update loading state
-    const modalComponent = document.querySelector('app-project-modal') as any;
-
-    switch (result.action) {
-      case 'create':
-        if (result.name) {
-          if (modalComponent) modalComponent.setLoading(true);
-          this.createProject(result.name);
-        }
-        break;
-      case 'rename':
-        if (result.name && this.modalData.projectName) {
-          if (modalComponent) modalComponent.setLoading(true);
-          this.renameProject(this.modalData.projectName, result.name);
-        }
-        break;
-      case 'delete':
-        if (this.modalData.projectName) {
-          if (modalComponent) modalComponent.setLoading(true);
-          this.deleteProject(this.modalData.projectName);
-        }
-        break;
+    if (result.success) {
+      this.showModal = false;
+      this.loadProjects(); // Reload to get updated list
     }
-  }
-
-  /**
-   * Create a new project
-   */
-  private createProject(name: string): void {
-    this.projectService.createProject(name).subscribe({
-      next: () => {
-        this.showModal = false;
-        this.loadProjects(); // Reload to get updated list
-      },
-      error: (error) => {
-        const modalComponent = document.querySelector('app-project-modal') as any;
-        if (modalComponent) {
-          modalComponent.setError(error.message || 'Failed to create project');
-        }
-      }
-    });
-  }
-
-  /**
-   * Rename an existing project
-   */
-  private renameProject(currentName: string, newName: string): void {
-    this.projectService.renameProject(currentName, newName).subscribe({
-      next: () => {
-        this.showModal = false;
-        this.loadProjects(); // Reload to get updated list
-      },
-      error: (error) => {
-        const modalComponent = document.querySelector('app-project-modal') as any;
-        if (modalComponent) {
-          modalComponent.setError(error.message || 'Failed to rename project');
-        }
-      }
-    });
-  }
-
-  /**
-   * Delete a project
-   */
-  private deleteProject(name: string): void {
-    this.projectService.deleteProject(name).subscribe({
-      next: () => {
-        this.showModal = false;
-        this.loadProjects(); // Reload to get updated list
-      },
-      error: (error) => {
-        const modalComponent = document.querySelector('app-project-modal') as any;
-        if (modalComponent) {
-          modalComponent.setError(error.message || 'Failed to delete project');
-        }
-      }
-    });
+    // If not successful, modal will show the error and stay open
   }
 
   /**

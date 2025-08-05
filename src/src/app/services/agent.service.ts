@@ -25,10 +25,21 @@ export interface TechStacksResponse {
 export interface TechStackSaveResponse {
   message: string;
   techStack: string[];
+  aiAgent?: string;
 }
 
 export interface ProjectTechStackResponse {
   techStack: string[];
+  aiAgent: string | null;
+}
+
+export interface AiAgentSaveResponse {
+  message: string;
+  aiAgent: string;
+}
+
+export interface AiAgentResponse {
+  aiAgent: string | null;
 }
 
 @Injectable({
@@ -69,21 +80,47 @@ export class AgentService {
   /**
    * Save tech stack selection for a project
    */
-  saveTechStack(projectName: string, techStack: string[]): Observable<TechStackSaveResponse> {
-    return this.http.post<TechStackSaveResponse>(`${this.baseUrl}/projects/${projectName}/tech-stack`, { techStack })
+  saveTechStack(projectName: string, techStack: string[], aiAgent?: string): Observable<TechStackSaveResponse> {
+    const body: any = { techStack };
+    if (aiAgent) {
+      body.aiAgent = aiAgent;
+    }
+    
+    return this.http.post<TechStackSaveResponse>(`${this.baseUrl}/projects/${projectName}/tech-stack`, body)
       .pipe(
         catchError(this.handleError<TechStackSaveResponse>('saveTechStack'))
       );
   }
 
   /**
-   * Get tech stack for a project
+   * Get tech stack and AI agent for a project
    */
-  getProjectTechStack(projectName: string): Observable<string[]> {
+  getProjectTechStack(projectName: string): Observable<{ techStack: string[]; aiAgent: string | null }> {
     return this.http.get<ProjectTechStackResponse>(`${this.baseUrl}/projects/${projectName}/tech-stack`)
       .pipe(
-        map(response => response.techStack),
-        catchError(this.handleError<string[]>('getProjectTechStack', []))
+        map(response => ({ techStack: response.techStack, aiAgent: response.aiAgent })),
+        catchError(this.handleError<{ techStack: string[]; aiAgent: string | null }>('getProjectTechStack', { techStack: [], aiAgent: null }))
+      );
+  }
+
+  /**
+   * Save AI agent selection for a project
+   */
+  saveAiAgent(projectName: string, aiAgent: string): Observable<AiAgentSaveResponse> {
+    return this.http.post<AiAgentSaveResponse>(`${this.baseUrl}/projects/${projectName}/ai-agent`, { aiAgent })
+      .pipe(
+        catchError(this.handleError<AiAgentSaveResponse>('saveAiAgent'))
+      );
+  }
+
+  /**
+   * Get AI agent for a project
+   */
+  getProjectAiAgent(projectName: string): Observable<string | null> {
+    return this.http.get<AiAgentResponse>(`${this.baseUrl}/projects/${projectName}/ai-agent`)
+      .pipe(
+        map(response => response.aiAgent),
+        catchError(this.handleError<string | null>('getProjectAiAgent', null))
       );
   }
 

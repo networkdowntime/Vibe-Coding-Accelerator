@@ -86,63 +86,181 @@ async function getTechStacks(req, res) {
 }
 
 /**
- * Save tech stack selection to project's techstack.txt file
+ * Save tech stack and AI agent selection to project's project-config.json file
  */
 async function saveTechStack(req, res) {
   try {
     const { projectName } = req.params;
-    const { techStack } = req.body;
+    const { techStack, aiAgent } = req.body;
 
     if (!Array.isArray(techStack)) {
       return res.status(400).json({ error: 'Tech stack must be an array' });
     }
 
     const projectPath = path.join(projectsPath, projectName);
-    const techStackFilePath = path.join(projectPath, 'techstack.txt');
+    const configFilePath = path.join(projectPath, 'project-config.json');
 
     // Ensure project directory exists
     await fs.mkdir(projectPath, { recursive: true });
 
-    // Write tech stack to file (one per line)
-    const content = techStack.join('\n');
-    await fs.writeFile(techStackFilePath, content, 'utf8');
+    // Read existing config or create new one
+    let config = {};
+    try {
+      const existingContent = await fs.readFile(configFilePath, 'utf8');
+      config = JSON.parse(existingContent);
+    } catch (error) {
+      // File doesn't exist or is invalid JSON, start with empty config
+      config = {};
+    }
 
-    res.json({ message: 'Tech stack saved successfully', techStack });
+    // Update config with new values
+    config['tech-stack'] = techStack;
+    if (aiAgent) {
+      config['ai-agent'] = aiAgent;
+    }
+
+    // Write config to file
+    await fs.writeFile(configFilePath, JSON.stringify(config, null, 2), 'utf8');
+
+    res.json({ 
+      message: 'Project configuration saved successfully', 
+      techStack, 
+      aiAgent: config['ai-agent'] 
+    });
   } catch (error) {
-    console.error('Error saving tech stack:', error);
-    res.status(500).json({ error: 'Failed to save tech stack' });
+    console.error('Error saving project configuration:', error);
+    res.status(500).json({ error: 'Failed to save project configuration' });
   }
 }
 
 /**
- * Get tech stack for a project from techstack.txt file
+ * Get tech stack and AI agent for a project from project-config.json file
+ * Provides backwards compatibility with techstack.txt files
  */
 async function getTechStack(req, res) {
   try {
     const { projectName } = req.params;
-    const techStackFilePath = path.join(projectsPath, projectName, 'techstack.txt');
+    const projectPath = path.join(projectsPath, projectName);
+    const configFilePath = path.join(projectPath, 'project-config.json');
+    const legacyTechStackPath = path.join(projectPath, 'techstack.txt');
 
     try {
-      const content = await fs.readFile(techStackFilePath, 'utf8');
-      const techStack = content
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line.length > 0);
+      // Try to read from new config file first
+      const configContent = await fs.readFile(configFilePath, 'utf8');
+      const config = JSON.parse(configContent);
+      
+      res.json({ 
+        techStack: config['tech-stack'] || [],
+        aiAgent: config['ai-agent'] || null
+      });
+    } catch (configError) {
+      // Config file doesn't exist or is invalid, check for legacy file
+      try {
+        const legacyContent = await fs.readFile(legacyTechStackPath, 'utf8');
+        const techStack = legacyContent
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0);
+        
+        // Migrate legacy file to new format
+        const config = {
+          'tech-stack': techStack
+        };
+        await fs.writeFile(configFilePath, JSON.stringify(config, null, 2), 'utf8');
+        
+        res.json({ 
+          techStack,
+          aiAgent: null
+        });
+      } catch (legacyError) {
+        // Neither file exists
+        if (legacyError.code === 'ENOENT' && configError.code === 'ENOENT') {
+          res.json({ 
+            techStack: [],
+            aiAgent: null
+          });
+        } else {
+          throw legacyError;
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error getting project configuration:', error);
+    res.status(500).json({ error: 'Failed to load project configuration' });
+  }
+}
 
-      res.json({ techStack });
+/**
+ * Save AI agent selection to project's project-config.json file
+ */
+async function saveAiAgent(req, res) {
+  try {
+    const { projectName } = req.params;
+    const { aiAgent } = req.body;
+
+    if (!aiAgent || typeof aiAgent !== 'string') {
+      return res.status(400).json({ error: 'AI agent must be a non-empty string' });
+    }
+
+    const projectPath = path.join(projectsPath, projectName);
+    const configFilePath = path.join(projectPath, 'project-config.json');
+
+    // Ensure project directory exists
+    await fs.mkdir(projectPath, { recursive: true });
+
+    // Read existing config or create new one
+    let config = {};
+    try {
+      const existingContent = await fs.readFile(configFilePath, 'utf8');
+      config = JSON.parse(existingContent);
     } catch (error) {
-      // Check if it's a file not found error
+      // File doesn't exist or is invalid JSON, start with empty config
+      config = {};
+    }
+
+    // Update config with AI agent
+    config['ai-agent'] = aiAgent;
+
+    // Write config to file
+    await fs.writeFile(configFilePath, JSON.stringify(config, null, 2), 'utf8');
+
+    res.json({ 
+      message: 'AI agent saved successfully', 
+      aiAgent
+    });
+  } catch (error) {
+    console.error('Error saving AI agent:', error);
+    res.status(500).json({ error: 'Failed to save AI agent' });
+  }
+}
+
+/**
+ * Get AI agent for a project from project-config.json file
+ */
+async function getAiAgent(req, res) {
+  try {
+    const { projectName } = req.params;
+    const projectPath = path.join(projectsPath, projectName);
+    const configFilePath = path.join(projectPath, 'project-config.json');
+
+    try {
+      const configContent = await fs.readFile(configFilePath, 'utf8');
+      const config = JSON.parse(configContent);
+      
+      res.json({ 
+        aiAgent: config['ai-agent'] || null
+      });
+    } catch (error) {
+      // Config file doesn't exist or is invalid
       if (error.code === 'ENOENT') {
-        // File doesn't exist - return empty array
-        res.json({ techStack: [] });
+        res.json({ aiAgent: null });
       } else {
-        // Other read errors - throw to outer catch
         throw error;
       }
     }
   } catch (error) {
-    console.error('Error getting tech stack:', error);
-    res.status(500).json({ error: 'Failed to load tech stack' });
+    console.error('Error getting AI agent:', error);
+    res.status(500).json({ error: 'Failed to load AI agent' });
   }
 }
 
@@ -150,5 +268,7 @@ module.exports = {
   getAgents,
   getTechStacks,
   saveTechStack,
-  getTechStack
+  getTechStack,
+  saveAiAgent,
+  getAiAgent
 };

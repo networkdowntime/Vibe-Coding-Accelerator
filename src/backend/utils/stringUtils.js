@@ -1,29 +1,27 @@
 /**
- * Convert a string to camelCase (lowercase first letter)
+ * Convert a string to snake_case (lowercase with underscores)
  */
 function toCamelCase(str) {
   return str
     .trim()
     .replace(/\s+/g, ' ') // normalize whitespace
     .split(' ')
-    .map((word, index) => {
+    .map(word => {
       const cleaned = word.replace(/[^a-zA-Z0-9]/g, '');
-      if (index === 0) {
-        return cleaned.toLowerCase();
-      }
-      return cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
+      return cleaned.toLowerCase();
     })
-    .join('');
+    .filter(word => word.length > 0) // Remove empty words
+    .join('_');
 }
 
 /**
- * Convert camelCase to readable name (Title Case with spaces)
+ * Convert snake_case to readable name (Title Case with spaces)
  */
-function toReadableName(camelCaseStr) {
-  return camelCaseStr
-    .replace(/([A-Z])/g, ' $1') // Add space before capital letters
-    .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
-    .trim();
+function toReadableName(snakeCaseStr) {
+  return snakeCaseStr
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 }
 
 module.exports = {

@@ -59,9 +59,8 @@ const projectController = {
       // Create project directory
       fs.mkdirSync(projectPath, { recursive: true });
 
-      // Create basic project structure
-      fs.mkdirSync(path.join(projectPath, 'docs'), { recursive: true });
-      fs.mkdirSync(path.join(projectPath, 'configs'), { recursive: true });
+      // Create basic project structure (per specification)
+      fs.mkdirSync(path.join(projectPath, 'files'), { recursive: true });
 
       res.status(201).json({
         name: camelCaseName,
@@ -106,11 +105,15 @@ const projectController = {
       // Rename directory
       fs.renameSync(oldPath, newPath);
 
+      // Get stats for the renamed project
+      const stats = fs.statSync(newPath);
+
+      // Return project object in the same format as getAllProjects
       res.json({
-        oldName: projectName,
-        newName: newCamelCaseName,
+        name: newCamelCaseName,
         displayName: toReadableName(newCamelCaseName),
-        message: 'Project renamed successfully'
+        createdAt: stats.birthtime.toISOString(),
+        modifiedAt: stats.mtime.toISOString()
       });
     } catch (error) {
       console.error('Error renaming project:', error);
