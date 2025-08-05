@@ -10,6 +10,8 @@ export interface Agent {
 
 export interface TechStack {
   id: string;
+  type: string;
+  typeDisplayName: string;
   name: string;
   displayName: string;
 }

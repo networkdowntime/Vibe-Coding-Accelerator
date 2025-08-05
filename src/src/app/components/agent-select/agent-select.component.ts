@@ -26,7 +26,7 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
 
   // Tech stack selection
   availableTechStacks: TechStack[] = [];
-  selectedTechStacks: string[] = [];
+  selectedTechStacks: string[] = []; // Now stores IDs instead of display names
   isLoadingTechStacks = false;
   
   // Autocomplete
@@ -34,7 +34,49 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
   filteredTechStacks: TechStack[] = [];
   showAutocomplete = false;
 
+  // Color mapping for tech stack types
+  typeColors: { [key: string]: string } = {
+    'security': '#ef4444',     // Red
+    'sql': '#3b82f6',          // Blue
+    'tech': '#10b981',         // Green
+    'ui-ux': '#8b5cf6',        // Purple
+    'workflow': '#f59e0b'      // Amber
+  };
+
+  // Legend items for display
+  get legendItems() {
+    const availableTypes = [...new Set(this.availableTechStacks.map(ts => ts.type))];
+    return availableTypes.map(type => ({
+      type,
+      displayName: this.availableTechStacks.find(ts => ts.type === type)?.typeDisplayName || type,
+      color: this.typeColors[type] || '#6b7280'
+    }));
+  }
+
   constructor(private agentService: AgentService) {}
+
+  /**
+   * Get tech stack object from ID
+   */
+  getTechStackById(id: string): TechStack | null {
+    return this.availableTechStacks.find(ts => ts.id === id) || null;
+  }
+
+  /**
+   * Get color for tech stack type
+   */
+  getTypeColor(type: string): string {
+    return this.typeColors[type] || '#6b7280';
+  }
+
+  /**
+   * Get selected tech stacks as objects
+   */
+  get selectedTechStackObjects(): TechStack[] {
+    return this.selectedTechStacks
+      .map(id => this.getTechStackById(id))
+      .filter((ts): ts is TechStack => ts !== null);
+  }
 
   ngOnInit(): void {
     this.setupTechStackFiltering();
@@ -172,7 +214,7 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
     const query = this.techStackInput.toLowerCase();
     this.filteredTechStacks = this.availableTechStacks.filter(stack =>
       stack.displayName.toLowerCase().includes(query) &&
-      !this.selectedTechStacks.includes(stack.displayName)
+      !this.selectedTechStacks.includes(stack.id)
     );
     this.showAutocomplete = this.techStackInput.length > 0 && this.filteredTechStacks.length > 0;
   }
@@ -203,8 +245,8 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
    * Add tech stack item
    */
   addTechStack(techStack: TechStack): void {
-    if (!this.selectedTechStacks.includes(techStack.displayName)) {
-      this.selectedTechStacks.push(techStack.displayName);
+    if (!this.selectedTechStacks.includes(techStack.id)) {
+      this.selectedTechStacks.push(techStack.id);
       this.updateTechStack();
     }
     this.techStackInput = '';
@@ -214,8 +256,8 @@ export class AgentSelectComponent implements OnInit, OnDestroy {
   /**
    * Remove tech stack item
    */
-  removeTechStack(item: string): void {
-    this.selectedTechStacks = this.selectedTechStacks.filter(stack => stack !== item);
+  removeTechStack(techStackId: string): void {
+    this.selectedTechStacks = this.selectedTechStacks.filter(id => id !== techStackId);
     this.updateTechStack();
     this.filterTechStacks();
   }

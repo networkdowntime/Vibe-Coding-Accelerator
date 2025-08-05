@@ -3,7 +3,18 @@
     "angular",
     "javascript",
     "nodejs",
-    "typescript"
+    "typescript",
+    "sp generation",
+    "security-owasp.instructions.md",
+    "sql-sp-generation.instructions.md",
+    "tech-java.instructions.md",
+    "tech-general-coding.instructions.md",
+    "tech-performance-optimization.instructions.md",
+    "tech-springboot.instructions.md",
+    "tech-code-commenting.instructions.md",
+    "workflow-spec-driven-workflow-brd-creation.instructions.md",
+    "workflow-spec-driven-workflow-prd-creation.instructions.md",
+    "workflow-spec-driven-workflow-srd-creation.instructions.md"
   ],
   "ai-agent": "githubCopilot"
 }

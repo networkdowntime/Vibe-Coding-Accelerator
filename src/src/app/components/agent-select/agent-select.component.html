@@ -22,17 +22,32 @@
 
   <!-- Tech Stack Selection -->
   <div class="tech-stack-section" *ngIf="selectedAgent">
-    <label class="section-label">Tech Stack</label>
+    <div class="section-header">
+      <div class="label-with-legend">
+        <label class="section-label">Tech Stack</label>
+        
+        <!-- Color Legend -->
+        <div class="color-legend" *ngIf="legendItems.length > 0">
+          <div class="legend-item" *ngFor="let item of legendItems">
+            <div class="legend-color" [style.background-color]="item.color"></div>
+            <span class="legend-label">{{ item.displayName }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
     
     <!-- Selected Tech Stacks (Chips) -->
-    <div class="selected-tech-stacks" *ngIf="selectedTechStacks.length > 0">
-      <div class="tech-chip" *ngFor="let stack of selectedTechStacks">
-        <span class="chip-text">{{ stack }}</span>
+    <div class="selected-tech-stacks" *ngIf="selectedTechStackObjects.length > 0">
+      <div class="tech-chip" 
+           *ngFor="let techStack of selectedTechStackObjects"
+           [style.background-color]="getTypeColor(techStack.type)"
+           [style.border-color]="getTypeColor(techStack.type)">
+        <span class="chip-text">{{ techStack.displayName }}</span>
         <button 
           class="chip-remove"
-          (click)="removeTechStack(stack)"
+          (click)="removeTechStack(techStack.id)"
           type="button"
-          [attr.aria-label]="'Remove ' + stack">
+          [attr.aria-label]="'Remove ' + techStack.displayName">
           ×
         </button>
       </div>
@@ -70,7 +85,7 @@
     </div>
 
     <!-- Empty State -->
-    <div class="empty-state" *ngIf="selectedTechStacks.length === 0 && !techStackInput">
+    <div class="empty-state" *ngIf="selectedTechStackObjects.length === 0 && !techStackInput">
       <p class="empty-text">No tech stack selected. Start typing to add technologies.</p>
     </div>
   </div>

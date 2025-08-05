@@ -18,12 +18,64 @@ function camelCaseToTitleCase(str) {
 }
 
 /**
- * Extract tech stack name from filename
- * e.g., "tech-javascript.instructions.md" -> "javascript"
+ * Convert type to display name
+ * e.g., "ui-ux" -> "UI/UX", "tech" -> "Technology"
  */
-function extractTechStackName(filename) {
-  const match = filename.match(/^tech-(.+)\.instructions\.md$/);
-  return match ? match[1] : null;
+function typeToDisplayName(type) {
+  const typeMap = {
+    'security': 'Security',
+    'sql': 'SQL',
+    'tech': 'Technology',
+    'ui-ux': 'UI/UX',
+    'workflow': 'Workflow'
+  };
+  
+  return typeMap[type] || camelCaseToTitleCase(type);
+}
+
+/**
+ * Extract tech stack type and name from filename
+ * e.g., "tech-javascript.instructions.md" -> { type: "tech", name: "javascript" }
+ * e.g., "security-owasp.instructions.md" -> { type: "security", name: "owasp" }
+ */
+function extractTechStack(filename) {
+  const validPrefixes = ['security', 'sql', 'tech', 'ui-ux', 'workflow'];
+  
+  // Check if file ends with .instructions.md
+  if (!filename.endsWith('.instructions.md')) {
+    return null;
+  }
+  
+  // Strip the .instructions.md extension
+  const baseFilename = filename.replace('.instructions.md', '');
+  
+  // Find which type prefix matches
+  let matchedType = null;
+  for (const prefix of validPrefixes) {
+    if (baseFilename.startsWith(prefix + '-')) {
+      matchedType = prefix;
+      break;
+    }
+  }
+  
+  // If no valid prefix found, return null
+  if (!matchedType) {
+    return null;
+  }
+  
+  // Extract the name by stripping the type prefix and dash
+  const name = baseFilename.replace(matchedType + '-', '').replace(/-/g, ' ').trim();
+  
+  // Ensure we have a valid name (not empty)
+  if (!name) {
+    return null;
+  }
+  
+  return {
+    id: filename,
+    type: matchedType,
+    name: name
+  };
 }
 
 /**
@@ -70,12 +122,14 @@ async function getTechStacks(req, res) {
 
     const files = await fs.readdir(instructionsPath);
     const techStacks = files
-      .map(extractTechStackName)
-      .filter(name => name !== null)
-      .map(name => ({
-        id: name,
-        name: camelCaseToTitleCase(name),
-        displayName: name
+      .map(extractTechStack)
+      .filter(techStack => techStack !== null)
+      .map(techStack => ({
+        id: techStack.id,
+        type: techStack.type,
+        typeDisplayName: typeToDisplayName(techStack.type),
+        name: techStack.name,
+        displayName: techStack.name
       }));
 
     res.json({ techStacks });
