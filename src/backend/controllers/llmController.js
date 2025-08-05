@@ -46,7 +46,7 @@ const createLLMClient = () => {
   return axios.create({
     baseURL: endpoint,
     headers: headers,
-    timeout: 30000 // 30 second timeout
+    timeout: 1200000 // 30 second timeout
   });
 };
 
@@ -55,7 +55,7 @@ const createLLMClient = () => {
  */
 const getProjectFiles = async (projectId) => {
   try {
-    const projectPath = path.join(process.cwd(), '..', '..', 'projects', projectId);
+    const projectPath = path.join(process.cwd(), '..', '..', 'projects', projectId, 'files');
     const files = [];
     
     // Recursively get all relevant files
@@ -188,9 +188,9 @@ Format your response as JSON with keys: analysis, suggestions, updatedContent, e
 /**
  * Save processed files to export directory
  */
-const saveProcessedFiles = async (jobId, processedFiles) => {
+const saveProcessedFiles = async (projectId, jobId, processedFiles) => {
   try {
-    const exportDir = path.join(process.cwd(), 'exports', jobId);
+    const exportDir = path.join(process.cwd(), '..', '..', 'projects', projectId, 'exports', jobId);
     await fs.mkdir(exportDir, { recursive: true });
     
     const results = [];
@@ -338,7 +338,7 @@ const processProjectAsync = async (jobId) => {
     
     // Save processed files
     if (job.processedFiles.length > 0) {
-      const exportResult = await saveProcessedFiles(jobId, job.processedFiles);
+      const exportResult = await saveProcessedFiles(job.projectId, jobId, job.processedFiles);
       job.exportPath = exportResult.exportDir;
       job.summary = exportResult.summary;
     }
