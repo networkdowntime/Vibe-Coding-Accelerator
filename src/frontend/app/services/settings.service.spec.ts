@@ -14,17 +14,7 @@ describe('SettingsService', () => {
     });
     
     httpMock = TestBed.inject(HttpTestingController);
-    
-    // Create service and handle the automatic constructor load
     service = TestBed.inject(SettingsService);
-    
-    // Handle the automatic load request made in constructor
-    const constructorReq = httpMock.expectOne(`${apiUrl}/openapi`);
-    constructorReq.flush({
-      endpoint: '',
-      hasApiKey: false,
-      isConfigured: false
-    });
   });
 
   afterEach(() => {
@@ -167,11 +157,7 @@ describe('SettingsService', () => {
     });
 
     it('should return null when no settings cached', () => {
-      // Reset the service cache by loading empty settings
-      service.loadOpenApiSettings().subscribe();
-      const req = httpMock.expectOne(`${apiUrl}/openapi`);
-      req.error(new ProgressEvent('Network error'));
-      
+      // Service starts with default empty settings from constructor
       const currentSettings = service.getCurrentSettings();
       expect(currentSettings).toEqual({
         endpoint: '',

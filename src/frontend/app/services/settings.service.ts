@@ -29,8 +29,12 @@ export class SettingsService {
   public openApiSettings$ = this.openApiSettingsSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // Load settings on service initialization
-    this.loadOpenApiSettings().subscribe();
+    // Initialize with default empty settings - load on demand instead of automatically
+    this.openApiSettingsSubject.next({
+      endpoint: '',
+      hasApiKey: false,
+      isConfigured: false
+    });
   }
 
   /**
