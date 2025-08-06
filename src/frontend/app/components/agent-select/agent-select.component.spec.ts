@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
 import { AgentSelectComponent } from './agent-select.component';
-import { AgentService } from '../../services/agent.service';
+import { AgentService, TechStack } from '../../services/agent.service';
 import { of, throwError } from 'rxjs';
 
 describe('AgentSelectComponent', () => {
@@ -17,11 +17,11 @@ describe('AgentSelectComponent', () => {
     { id: 'claude', name: 'Claude' }
   ];
 
-  const mockTechStacks = [
-    { id: 'javascript', name: 'Javascript', displayName: 'javascript' },
-    { id: 'typescript', name: 'Typescript', displayName: 'typescript' },
-    { id: 'angular', name: 'Angular', displayName: 'angular' }
-  ];
+        const mockTechStacks: TechStack[] = [
+        { id: 'javascript', type: 'language', typeDisplayName: 'Language', name: 'javascript', displayName: 'JavaScript' },
+        { id: 'angular', type: 'framework', typeDisplayName: 'Framework', name: 'angular', displayName: 'Angular' },
+        { id: 'react', type: 'framework', typeDisplayName: 'Framework', name: 'react', displayName: 'React' }
+      ];
 
   beforeEach(async () => {
     const agentServiceSpy = jasmine.createSpyObj('AgentService', [
@@ -64,7 +64,7 @@ describe('AgentSelectComponent', () => {
   describe('Component Initialization', () => {
     it('should load agents on init', () => {
       agentService.getAgents.and.returnValue(of(mockAgents));
-      agentService.getProjectTechStack.and.returnValue(of([]));
+      agentService.getProjectTechStack.and.returnValue(of({ techStack: [], aiAgent: null }));
 
       component.projectName = 'testProject';
       component.ngOnInit();
@@ -76,7 +76,7 @@ describe('AgentSelectComponent', () => {
 
     it('should load project tech stack on init when project name is provided', () => {
       agentService.getAgents.and.returnValue(of(mockAgents));
-      agentService.getProjectTechStack.and.returnValue(of(['javascript', 'typescript']));
+      agentService.getProjectTechStack.and.returnValue(of({ techStack: ['javascript', 'typescript'], aiAgent: null }));
 
       component.projectName = 'testProject';
       component.ngOnInit();
@@ -98,7 +98,7 @@ describe('AgentSelectComponent', () => {
   describe('Agent Selection', () => {
     beforeEach(() => {
       agentService.getAgents.and.returnValue(of(mockAgents));
-      agentService.getProjectTechStack.and.returnValue(of([]));
+      agentService.getProjectTechStack.and.returnValue(of({ techStack: [], aiAgent: null }));
       component.ngOnInit();
     });
 
@@ -123,6 +123,7 @@ describe('AgentSelectComponent', () => {
     });
 
     it('should emit agent changed event', () => {
+      agentService.getTechStacks.and.returnValue(of(mockTechStacks));
       spyOn(component.agentChanged, 'emit');
 
       component.selectedAgent = mockAgents[0];
@@ -135,7 +136,7 @@ describe('AgentSelectComponent', () => {
   describe('Tech Stack Management', () => {
     beforeEach(() => {
       agentService.getAgents.and.returnValue(of(mockAgents));
-      agentService.getProjectTechStack.and.returnValue(of([]));
+      agentService.getProjectTechStack.and.returnValue(of({ techStack: [], aiAgent: null }));
       agentService.getTechStacks.and.returnValue(of(mockTechStacks));
       agentService.saveTechStack.and.returnValue(of({ message: 'Saved', techStack: [] }));
       
@@ -148,18 +149,18 @@ describe('AgentSelectComponent', () => {
     it('should add tech stack item', () => {
       spyOn(component.techStackChanged, 'emit');
 
-      component.addTechStack(mockTechStacks[0]);
+      component.addTechStack(mockTechStacks[0]); // JavaScript tech stack
 
       expect(component.selectedTechStacks).toContain('javascript');
       expect(agentService.setSelectedTechStack).toHaveBeenCalledWith(['javascript']);
       expect(component.techStackChanged.emit).toHaveBeenCalledWith(['javascript']);
-      expect(agentService.saveTechStack).toHaveBeenCalledWith('testProject', ['javascript']);
+      expect(agentService.saveTechStack).toHaveBeenCalledWith('testProject', ['javascript'], 'githubCopilot');
     });
 
     it('should not add duplicate tech stack item', () => {
       component.selectedTechStacks = ['javascript'];
 
-      component.addTechStack(mockTechStacks[0]);
+      component.addTechStack(mockTechStacks[0]); // JavaScript tech stack
 
       expect(component.selectedTechStacks).toEqual(['javascript']);
     });
@@ -195,7 +196,7 @@ describe('AgentSelectComponent', () => {
       component['filterTechStacks']();
 
       expect(component.filteredTechStacks).toEqual([
-        { id: 'javascript', name: 'Javascript', displayName: 'javascript' }
+        { id: 'javascript', type: 'language', typeDisplayName: 'Language', name: 'javascript', displayName: 'JavaScript' }
       ]);
     });
 

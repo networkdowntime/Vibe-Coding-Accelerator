@@ -1,0 +1,40 @@
+{
+  "techStackFile": "tech-general-coding.instructions.md",
+  "appliedGuidelines": [
+    {
+      "id": "GDL-001",
+      "reason": "Updated Priorities In Order to match Project Guidelines priorities and wording."
+    },
+    {
+      "id": "GDL-004",
+      "reason": "Added mention of aggressive application of design patterns (Factory, Builder, Strategy, Observer) in Code Organization & Architecture."
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Added preference for properties over YAML and externalized configuration in Configuration & Environment Management (merged as appropriate)."
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Added repository pattern preference (avoid Spring Data JPA, prefer SQL prepared statements) as part of Code Organization & Architecture (not explicitly stated but aligned with design patterns and architecture)."
+    }
+  ],
+  "unappliedGuidelines": [
+    {
+      "id": "GDL-002",
+      "reason": "Java Version 16 guideline is Java-specific and not applicable to this general tech stack instruction file."
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Java Access Modifiers guideline is Java-specific and not applicable to this general tech stack instruction file."
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Java Encapsulation guideline is Java-specific and contradicts common encapsulation best practices; not applied in general instructions."
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Spring Boot Versioning guideline is specific to Spring Boot and Java; not applicable to this general tech stack instruction file."
+    }
+  ],
+  "processingTime": "2025-08-06T18:46:05.662Z"
+}

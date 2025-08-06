@@ -1,0 +1,39 @@
+{
+  "techStackFile": "tech-code-commenting.instructions.md",
+  "appliedGuidelines": [
+    {
+      "id": "GDL-001",
+      "reason": "Already present in Tech Stack Instruction file as core principles of code clarity and maintainability."
+    },
+    {
+      "id": "GDL-002",
+      "reason": "Added Java version guideline to align with project standards."
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Added access modifiers guideline to conform with project preference for public access."
+    },
+    {
+      "id": "GDL-004",
+      "reason": "Added design patterns guideline to encourage aggressive use of patterns."
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Added encapsulation guideline to keep implementation details public."
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Added Spring Boot version guideline to specify framework version."
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Added configuration guideline to prefer properties over YAML and externalize configuration."
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Added repository pattern guideline to avoid Spring Data JPA and prefer SQL prepared statements."
+    }
+  ],
+  "unappliedGuidelines": [],
+  "processingTime": "2025-08-06T18:25:11.586Z"
+}

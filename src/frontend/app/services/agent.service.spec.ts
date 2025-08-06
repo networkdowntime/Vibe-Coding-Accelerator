@@ -12,8 +12,8 @@ describe('AgentService', () => {
   ];
 
   const mockTechStacks: TechStack[] = [
-    { id: 'javascript', name: 'Javascript', displayName: 'javascript' },
-    { id: 'typescript', name: 'Typescript', displayName: 'typescript' }
+    { id: 'javascript', type: 'language', typeDisplayName: 'Language', name: 'Javascript', displayName: 'javascript' },
+    { id: 'typescript', type: 'language', typeDisplayName: 'Language', name: 'Typescript', displayName: 'typescript' }
   ];
 
   beforeEach(() => {
@@ -108,9 +108,10 @@ describe('AgentService', () => {
     it('should return project tech stack', () => {
       const projectName = 'testProject';
       const expectedTechStack = ['javascript', 'typescript'];
+      const expectedResponse = { techStack: expectedTechStack, aiAgent: null };
 
       service.getProjectTechStack(projectName).subscribe(techStack => {
-        expect(techStack).toEqual(expectedTechStack);
+        expect(techStack).toEqual(expectedResponse);
       });
 
       const req = httpMock.expectOne(`/api/projects/${projectName}/tech-stack`);
@@ -120,7 +121,7 @@ describe('AgentService', () => {
 
     it('should return empty array on error', () => {
       service.getProjectTechStack('testProject').subscribe(techStack => {
-        expect(techStack).toEqual([]);
+        expect(techStack).toEqual({ techStack: [], aiAgent: null });
       });
 
       const req = httpMock.expectOne('/api/projects/testProject/tech-stack');

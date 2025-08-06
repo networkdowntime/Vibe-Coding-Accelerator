@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 import { ProjectListComponent } from './project-list.component';
 import { ProjectService, Project } from '../../services/project.service';
@@ -8,7 +9,7 @@ describe('ProjectListComponent', () => {
   let component: ProjectListComponent;
   let fixture: ComponentFixture<ProjectListComponent>;
   let mockProjectService: jasmine.SpyObj<ProjectService>;
-  let mockRouter: jasmine.SpyObj<Router>;
+  let router: Router;
 
   const mockProjects: Project[] = [
     {
@@ -32,20 +33,18 @@ describe('ProjectListComponent', () => {
       'renameProject',
       'deleteProject'
     ]);
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      imports: [ProjectListComponent],
+      imports: [ProjectListComponent, RouterTestingModule],
       providers: [
-        { provide: ProjectService, useValue: projectServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: ProjectService, useValue: projectServiceSpy }
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProjectListComponent);
     component = fixture.componentInstance;
     mockProjectService = TestBed.inject(ProjectService) as jasmine.SpyObj<ProjectService>;
-    mockRouter = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    router = TestBed.inject(Router);
   });
 
   it('should create', () => {
@@ -147,9 +146,11 @@ describe('ProjectListComponent', () => {
   describe('openProject', () => {
     it('should navigate to project view', () => {
       const project = mockProjects[0];
+      spyOn(router, 'navigate');
+      
       component.openProject(project);
 
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/project', project.name]);
+      expect(router.navigate).toHaveBeenCalledWith(['/project', project.name]);
     });
   });
 

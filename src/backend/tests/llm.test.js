@@ -9,7 +9,8 @@ jest.mock('../controllers/llmController', () => ({
   getStatus: jest.fn(),
   cancelProcessing: jest.fn(),
   retryProcessing: jest.fn(),
-  getResults: jest.fn()
+  getResults: jest.fn(),
+  downloadConfig: jest.fn(),
 }));
 
 const app = express();

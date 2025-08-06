@@ -1,0 +1,64 @@
+{
+  "techStackFile": "tech-general-coding.instructions.md",
+  "appliedGuidelines": [
+    {
+      "id": "GDL-001",
+      "reason": "Updated Priorities In Order section to match Project Guidelines priorities and wording."
+    },
+    {
+      "id": "GDL-002",
+      "reason": "Not applicable to general coding standards; Java version is language-specific."
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Not applicable; access modifiers not addressed in this general coding standards file."
+    },
+    {
+      "id": "GDL-004",
+      "reason": "Added aggressive application of design patterns to Code Organization & Architecture section."
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Not applicable; encapsulation preferences not addressed in this general coding standards file."
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Not applicable; Spring Boot version is framework-specific."
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Not applicable; configuration preferences are framework-specific."
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Not applicable; repository pattern is framework-specific."
+    }
+  ],
+  "unappliedGuidelines": [
+    {
+      "id": "GDL-002",
+      "reason": "Java version guideline is specific to Java projects and not relevant to this general coding standards file."
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Access modifier guideline is Java-specific and not addressed in this general coding standards file."
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Encapsulation guideline contradicts common best practices and is Java-specific; not included here."
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Spring Boot version guideline is framework-specific and not relevant to this general coding standards file."
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Configuration preference guideline is framework-specific and not relevant here."
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Repository pattern guideline is framework-specific and not relevant here."
+    }
+  ],
+  "processingTime": "2025-08-06T18:25:45.272Z"
+}

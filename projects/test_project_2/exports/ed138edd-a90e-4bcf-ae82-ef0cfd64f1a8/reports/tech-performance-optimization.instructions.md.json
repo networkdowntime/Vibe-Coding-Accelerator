@@ -1,0 +1,52 @@
+{
+  "techStackFile": "tech-performance-optimization.instructions.md",
+  "appliedGuidelines": [
+    {
+      "id": "GDL-001",
+      "reason": "Already present in Tech Stack Instruction file as general principles emphasizing performance priority."
+    },
+    {
+      "id": "GDL-002",
+      "reason": "Added Java 16 version guideline under Java backend tips to conform with Project Guidelines."
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Added Java access modifier guideline preferring public by default under Java backend tips."
+    },
+    {
+      "id": "GDL-004",
+      "reason": "Added aggressive use of design patterns (Factory, Builder, Strategy, Observer) under Java backend tips."
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Added guideline to keep implementation details public and avoid helper methods under Java backend tips."
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Not applicable as Spring Boot versioning is not relevant to this Tech Stack Instruction focused on performance optimization."
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Not applicable as Spring Boot configuration preferences are not relevant to this Tech Stack Instruction."
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Not applicable as repository pattern preferences are not relevant to this Tech Stack Instruction."
+    }
+  ],
+  "unappliedGuidelines": [
+    {
+      "id": "GDL-006",
+      "reason": "Spring Boot Version guideline not applied because the Tech Stack Instruction does not cover Spring Boot specifics."
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Spring Boot Configuration guideline not applied because the Tech Stack Instruction does not cover configuration management."
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Spring Boot Repository Pattern guideline not applied because the Tech Stack Instruction does not cover repository patterns."
+    }
+  ],
+  "processingTime": "2025-08-06T18:48:31.517Z"
+}

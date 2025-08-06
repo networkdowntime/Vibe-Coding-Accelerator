@@ -1,0 +1,39 @@
+{
+  "techStackFile": "tech-springboot.instructions.md",
+  "appliedGuidelines": [
+    {
+      "id": "GDL-001",
+      "reason": "Already present in Tech Stack Instruction file"
+    },
+    {
+      "id": "GDL-002",
+      "reason": "Updated Spring Boot version and Java version to match Project Guidelines (Java 16 and Spring Boot 2.8)"
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Updated access modifier guideline to prefer public by default, minimizing private, matching Project Guidelines"
+    },
+    {
+      "id": "GDL-004",
+      "reason": "Already present in Tech Stack Instruction file"
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Already present in Tech Stack Instruction file"
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Updated Spring Boot version to 2.8 with Java 16 as per Project Guidelines"
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Updated configuration preference from YAML to properties as per Project Guidelines"
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Replaced Spring Data JPA repository usage with preferred repository pattern using SQL prepared statements as per Project Guidelines"
+    }
+  ],
+  "unappliedGuidelines": [],
+  "processingTime": "2025-08-06T18:49:49.708Z"
+}

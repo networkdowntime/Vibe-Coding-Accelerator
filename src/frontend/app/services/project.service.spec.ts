@@ -5,7 +5,7 @@ import { ProjectService, Project } from './project.service';
 describe('ProjectService', () => {
   let service: ProjectService;
   let httpMock: HttpTestingController;
-  const apiUrl = 'http://localhost:3001/api/projects';
+  const apiUrl = '/api/projects';
 
   beforeEach(() => {
     TestBed.configureTestingModule({

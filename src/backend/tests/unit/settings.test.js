@@ -3,6 +3,20 @@ const app = require('../../server');
 const fs = require('fs').promises;
 const path = require('path');
 
+// Mock axios at the top level
+jest.mock('axios');
+// Mock fs at the top level
+jest.mock('fs', () => ({
+  promises: {
+    readFile: jest.fn(),
+    writeFile: jest.fn(),
+    unlink: jest.fn()
+  },
+  existsSync: jest.fn().mockReturnValue(true),
+  mkdirSync: jest.fn(),
+  readFileSync: jest.fn()
+}));
+
 describe('Settings API', () => {
   let originalEnv;
   const testEnvPath = path.join(process.cwd(), '.env.test');
@@ -30,10 +44,19 @@ describe('Settings API', () => {
     // Clear environment variables for each test
     delete process.env.OPENAPI_ENDPOINT;
     delete process.env.OPENAPI_API_KEY;
+    
+    // Reset axios mocks
+    jest.clearAllMocks();
+    
+    // Mock fs.readFile to return empty .env content by default
+    fs.readFile.mockResolvedValue('');
   });
 
   describe('GET /api/settings/openapi', () => {
     it('should return empty settings when not configured', async () => {
+      // Mock fs.readFile to simulate no .env file
+      fs.readFile.mockRejectedValue(new Error('ENOENT: no such file or directory'));
+      
       const res = await request(app).get('/api/settings/openapi');
       
       expect(res.statusCode).toBe(200);
@@ -45,9 +68,8 @@ describe('Settings API', () => {
     });
 
     it('should return current settings when configured', async () => {
-      // Mock environment variables
-      process.env.OPENAPI_ENDPOINT = 'https://test-endpoint.com';
-      process.env.OPENAPI_API_KEY = 'test-key';
+      // Mock fs.readFile to return environment variables
+      fs.readFile.mockResolvedValue('OPENAPI_ENDPOINT=https://test-endpoint.com\nOPENAPI_API_KEY=test-key');
       
       const res = await request(app).get('/api/settings/openapi');
       
@@ -140,6 +162,9 @@ describe('Settings API', () => {
 
   describe('POST /api/settings/openapi/test', () => {
     it('should return 400 when settings not configured', async () => {
+      // Mock fs.readFile to simulate no .env file (should return empty object)
+      fs.readFile.mockRejectedValue(new Error('ENOENT: no such file or directory'));
+      
       const res = await request(app).post('/api/settings/openapi/test');
 
       expect(res.statusCode).toBe(400);
@@ -148,9 +173,15 @@ describe('Settings API', () => {
     });
 
     it('should handle connection errors gracefully', async () => {
-      // Set up invalid endpoint for testing
-      process.env.OPENAPI_ENDPOINT = 'https://nonexistent-endpoint.invalid';
-      process.env.OPENAPI_API_KEY = 'test-key';
+      // Mock fs.readFile to return environment variables
+      fs.readFile.mockResolvedValue('OPENAPI_ENDPOINT=https://nonexistent-endpoint.invalid\nOPENAPI_API_KEY=test-key');
+      
+      // Mock axios to simulate connection error
+      const axios = require('axios');
+      axios.get = jest.fn().mockRejectedValue({
+        code: 'ENOTFOUND',
+        message: 'getaddrinfo ENOTFOUND nonexistent-endpoint.invalid'
+      });
 
       const res = await request(app).post('/api/settings/openapi/test');
 
@@ -160,34 +191,30 @@ describe('Settings API', () => {
     });
 
     it('should handle timeout errors', async () => {
+      // Mock fs.readFile to return environment variables
+      fs.readFile.mockResolvedValue('OPENAPI_ENDPOINT=https://slow-endpoint.com\nOPENAPI_API_KEY=test-key');
+      
       // Mock axios to simulate timeout
       const axios = require('axios');
-      const originalPost = axios.post;
-      
-      axios.post = jest.fn().mockRejectedValue({
+      axios.get = jest.fn().mockRejectedValue({
         code: 'ETIMEDOUT',
         message: 'timeout of 30000ms exceeded'
       });
-
-      process.env.OPENAPI_ENDPOINT = 'https://slow-endpoint.com';
-      process.env.OPENAPI_API_KEY = 'test-key';
 
       const res = await request(app).post('/api/settings/openapi/test');
 
       expect(res.statusCode).toBe(408);
       expect(res.body.success).toBe(false);
       expect(res.body.error).toContain('Connection timeout');
-
-      // Restore original axios
-      axios.post = originalPost;
     });
 
     it('should handle authentication errors', async () => {
+      // Mock fs.readFile to return environment variables
+      fs.readFile.mockResolvedValue('OPENAPI_ENDPOINT=https://test-endpoint.com\nOPENAPI_API_KEY=invalid-key');
+      
       // Mock axios to simulate 401 response
       const axios = require('axios');
-      const originalPost = axios.post;
-      
-      axios.post = jest.fn().mockRejectedValue({
+      axios.get = jest.fn().mockRejectedValue({
         response: {
           status: 401,
           data: { error: 'Unauthorized' }
@@ -195,66 +222,52 @@ describe('Settings API', () => {
         message: 'Request failed with status code 401'
       });
 
-      process.env.OPENAPI_ENDPOINT = 'https://test-endpoint.com';
-      process.env.OPENAPI_API_KEY = 'invalid-key';
-
       const res = await request(app).post('/api/settings/openapi/test');
 
       expect(res.statusCode).toBe(400);
       expect(res.body.success).toBe(false);
       expect(res.body.error).toContain('Authentication failed');
-
-      // Restore original axios
-      axios.post = originalPost;
     });
 
     it('should handle successful connection', async () => {
+      // Mock fs.readFile to return environment variables
+      fs.readFile.mockResolvedValue('OPENAPI_ENDPOINT=https://test-endpoint.com\nOPENAPI_API_KEY=test-key');
+      
       // Mock axios to simulate successful response
       const axios = require('axios');
-      const originalPost = axios.post;
-      
-      axios.post = jest.fn().mockResolvedValue({
+      axios.get = jest.fn().mockResolvedValue({
         status: 200,
         data: {
-          choices: [
+          data: [
             {
-              message: {
-                content: 'Connection successful'
-              }
+              id: 'gpt-3.5-turbo',
+              object: 'model'
             }
           ]
         }
       });
-
-      process.env.OPENAPI_ENDPOINT = 'https://valid-endpoint.com';
-      process.env.OPENAPI_API_KEY = 'valid-key';
 
       const res = await request(app).post('/api/settings/openapi/test');
 
       expect(res.statusCode).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.message).toBe('Connection successful');
-
-      // Restore original axios
-      axios.post = originalPost;
     });
   });
 
   describe('Error Handling', () => {
     it('should handle file system errors gracefully', async () => {
-      // Mock fs.readFile to throw an error
-      const fs = require('fs').promises;
-      const originalReadFile = fs.readFile;
-      
-      fs.readFile = jest.fn().mockRejectedValue(new Error('File system error'));
+      // Mock fs.readFile to return empty object (normal behavior on file system error)
+      fs.readFile.mockRejectedValue(new Error('File system error'));
 
       const res = await request(app).get('/api/settings/openapi');
 
-      expect(res.statusCode).toBe(500);
-      expect(res.body.error).toBe('Failed to load OpenAPI settings');
-
-      // Restore original fs.readFile
-      fs.readFile = originalReadFile;
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual({
+        endpoint: '',
+        hasApiKey: false,
+        isConfigured: false
+      });
     });
   });
 });

@@ -251,6 +251,12 @@ describe('LlmProgressComponent', () => {
     });
 
     it('should return 0% when no current job', () => {
+      // Ensure the processing state has no current job
+      component.processingState = {
+        isProcessing: false,
+        currentJob: null,
+        error: null
+      };
       expect(component.getProgressWidth()).toBe('0%');
     });
 

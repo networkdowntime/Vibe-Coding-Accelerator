@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 import { SettingsComponent } from './settings.component';
 import { SettingsService } from '../../services/settings.service';
 import { of, throwError } from 'rxjs';
@@ -9,7 +10,6 @@ describe('SettingsComponent', () => {
   let component: SettingsComponent;
   let fixture: ComponentFixture<SettingsComponent>;
   let settingsService: jasmine.SpyObj<SettingsService>;
-  let httpTestingController: HttpTestingController;
 
   const mockSettings = {
     endpoint: 'https://test-endpoint.com',
@@ -31,7 +31,8 @@ describe('SettingsComponent', () => {
       imports: [
         SettingsComponent,
         HttpClientTestingModule,
-        FormsModule
+        FormsModule,
+        RouterTestingModule
       ],
       providers: [
         { provide: SettingsService, useValue: settingsServiceSpy }
@@ -41,14 +42,13 @@ describe('SettingsComponent', () => {
     fixture = TestBed.createComponent(SettingsComponent);
     component = fixture.componentInstance;
     settingsService = TestBed.inject(SettingsService) as jasmine.SpyObj<SettingsService>;
-    httpTestingController = TestBed.inject(HttpTestingController);
 
     settingsService.loadOpenApiSettings.and.returnValue(of(mockSettings));
     settingsService.getCurrentSettings.and.returnValue(mockSettings);
   });
 
   afterEach(() => {
-    httpTestingController.verify();
+    // No HTTP verification needed since we're using mocked services
   });
 
   it('should create', () => {

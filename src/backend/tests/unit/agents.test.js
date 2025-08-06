@@ -97,10 +97,34 @@ describe('Agent Routes', () => {
 
       expect(response.body).toEqual({
         techStacks: [
-          { id: 'javascript', name: 'Javascript', displayName: 'javascript' },
-          { id: 'typescript', name: 'Typescript', displayName: 'typescript' },
-          { id: 'angular', name: 'Angular', displayName: 'angular' },
-          { id: 'nodejs', name: 'Nodejs', displayName: 'nodejs' }
+          { 
+            id: 'tech-javascript.instructions.md', 
+            name: 'javascript', 
+            displayName: 'javascript',
+            type: 'tech',
+            typeDisplayName: 'Technology'
+          },
+          { 
+            id: 'tech-typescript.instructions.md', 
+            name: 'typescript', 
+            displayName: 'typescript',
+            type: 'tech',
+            typeDisplayName: 'Technology'
+          },
+          { 
+            id: 'tech-angular.instructions.md', 
+            name: 'angular', 
+            displayName: 'angular',
+            type: 'tech',
+            typeDisplayName: 'Technology'
+          },
+          { 
+            id: 'tech-nodejs.instructions.md', 
+            name: 'nodejs', 
+            displayName: 'nodejs',
+            type: 'tech',
+            typeDisplayName: 'Technology'
+          }
         ]
       });
     });

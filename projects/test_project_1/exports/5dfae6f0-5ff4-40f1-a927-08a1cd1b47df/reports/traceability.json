@@ -1,0 +1,84 @@
+{
+  "jobId": "5dfae6f0-5ff4-40f1-a927-08a1cd1b47df",
+  "completedAt": "2025-08-06T18:26:36.457Z",
+  "projectCompliance": "100%",
+  "totalTechStacks": 3,
+  "totalGuidelines": 8,
+  "totalAppliedGuidelines": 8,
+  "totalUnappliedGuidelines": 0,
+  "appliedGuidelines": [
+    {
+      "id": "GDL-001",
+      "reason": "Added security priority from Project Guidelines to Spring Boot Best Practices Security section",
+      "appliedInFiles": [
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-002",
+      "reason": "Updated Spring Boot Version and Java Version to match Project Guidelines (2.8 with Java 16)",
+      "appliedInFiles": [
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Updated Access Modifiers guideline to prefer public by default, replacing any contradictory content",
+      "appliedInFiles": [
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-004",
+      "reason": "Ensured Design Patterns guideline is reflected by mentioning aggressive use of patterns",
+      "appliedInFiles": [
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Updated Encapsulation guideline to keep implementation details public, removing any contradictory helper method guidance",
+      "appliedInFiles": [
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Applied Spring Boot Version 2.8 with Java 16 as per Project Guidelines",
+      "appliedInFiles": [
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Updated Configuration preference to properties over YAML as per Project Guidelines",
+      "appliedInFiles": [
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Replaced Spring Data JPA repository usage with preferred repository pattern using SQL prepared statements",
+      "appliedInFiles": [
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    }
+  ],
+  "unappliedGuidelines": []
+}

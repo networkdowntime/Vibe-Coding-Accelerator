@@ -561,11 +561,21 @@ const saveProcessedTechStacks = async (projectId, jobId, processedTechStacks, un
     throw new Error(`Failed to save traceability report: ${error.message}`);
   }
   
-  // copy the README.md file from the ai_agent/githubCopilot directory to the export directory
+  // copy the README.md file, the chatmodes folder, and the prompts folder from the ai_agent/githubCopilot directory to the export directory
   try {
     const readmeSrc = path.join(process.cwd(), '..', '..', 'ai_agents', 'githubCopilot', 'README.md');
     const readmeDest = path.join(exportDir, 'README.md');
     await fs.copyFile(readmeSrc, readmeDest);
+
+    const chatModesSrc = path.join(process.cwd(), '..', '..', 'ai_agents', 'githubCopilot', 'chatmodes');
+    const chatModesDest = path.join(exportDir, '.github', 'chatmodes');
+    await fs.mkdir(chatModesDest, { recursive: true });
+    await fs.cp(chatModesSrc, chatModesDest, { recursive: true });
+
+    const promptsSrc = path.join(process.cwd(), '..', '..', 'ai_agents', 'githubCopilot', 'prompts');
+    const promptsDest = path.join(exportDir, '.github', 'prompts');
+    await fs.mkdir(promptsDest, { recursive: true });
+    await fs.cp(promptsSrc, promptsDest, { recursive: true });
   } catch (error) {
     console.error(`Failed to copy README.md file:`, error.message);
     throw new Error(`Failed to copy README.md file: ${error.message}`);
