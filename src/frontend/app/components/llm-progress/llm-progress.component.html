@@ -37,15 +37,15 @@
       <div class="file-details" *ngIf="processingState.currentJob">
         <div class="detail-row">
           <span class="label">Total Files:</span>
-          <span class="value">{{ processingState.currentJob?.progress?.total }}</span>
+          <span class="value">{{ processingState.currentJob.progress.total }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Completed:</span>
-          <span class="value text-green-600">{{ processingState.currentJob?.progress?.completed }}</span>
+          <span class="value text-green-600">{{ processingState.currentJob.progress.completed }}</span>
         </div>
-        <div class="detail-row" *ngIf="(processingState.currentJob?.progress?.failed || 0) > 0">
+        <div class="detail-row" *ngIf="(processingState.currentJob.progress.failed || 0) > 0">
           <span class="label">Failed:</span>
-          <span class="value text-red-600">{{ processingState.currentJob?.progress?.failed }}</span>
+          <span class="value text-red-600">{{ processingState.currentJob.progress.failed }}</span>
         </div>
       </div>
 
