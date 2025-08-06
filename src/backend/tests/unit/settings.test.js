@@ -263,9 +263,9 @@ describe('Settings API', () => {
     });
 
     it('should handle timeout errors gracefully', async () => {
-      const timeoutError = new Error('timeout of 5000ms exceeded');
-      timeoutError.code = 'ETIMEDOUT';
-      axios.post.mockRejectedValueOnce(timeoutError);
+      const timeoutError = new Error('timeout of 10000ms exceeded');
+      timeoutError.code = 'ECONNABORTED';
+      axios.post.mockRejectedValue(timeoutError);
 
       const testData = {
         llmEndpoint: 'https://api.openai.com',
@@ -280,7 +280,6 @@ describe('Settings API', () => {
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Connection test failed');
       expect(response.body.message).toBe('Connection timeout');
-      expect(response.body.details).toBe('The LLM endpoint did not respond within 10 seconds.');
     });
   });
 

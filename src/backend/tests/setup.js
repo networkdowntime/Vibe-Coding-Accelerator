@@ -4,12 +4,12 @@ import { jest } from '@jest/globals';
 // Global test configuration
 global.console = {
   ...console,
-  // Suppress console.log in tests unless NODE_ENV is set to 'test-verbose'
+  // Suppress console output in tests unless NODE_ENV is set to 'test-verbose'
   log: process.env.NODE_ENV === 'test-verbose' ? console.log : jest.fn(),
   debug: process.env.NODE_ENV === 'test-verbose' ? console.debug : jest.fn(),
   info: process.env.NODE_ENV === 'test-verbose' ? console.info : jest.fn(),
-  warn: console.warn,
-  error: console.error,
+  warn: process.env.NODE_ENV === 'test-verbose' ? console.warn : jest.fn(),
+  error: process.env.NODE_ENV === 'test-verbose' ? console.error : jest.fn(),
 };
 
 // Set test environment variables

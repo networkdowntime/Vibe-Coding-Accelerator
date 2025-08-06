@@ -9,10 +9,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FileListComponent } from '../file-list/file-list.component';
 import { AgentSelectComponent } from '../agent-select/agent-select.component';
+import { LlmProgressDialogComponent, LLMProgressDialogData } from '../llm-progress-dialog/llm-progress-dialog.component';
+import { LlmService } from '../../services/llm.service';
 
 interface ProjectDetails {
   id: string;
@@ -25,6 +29,7 @@ interface ProjectDetails {
   tags: string[];
   files: ProjectFile[];
   tasks: ProjectTask[];
+  aiAgentConfig?: any;
 }
 
 interface ProjectFile {
@@ -34,6 +39,7 @@ interface ProjectFile {
   size: number;
   uploadDate: Date;
   status: 'uploaded' | 'processing' | 'processed' | 'error';
+  selected?: boolean;
 }
 
 interface ProjectTask {
@@ -60,6 +66,8 @@ interface ProjectTask {
     MatSelectModule,
     MatChipsModule,
     MatProgressBarModule,
+    MatDialogModule,
+    MatCheckboxModule,
     FileListComponent,
     AgentSelectComponent
   ],
@@ -254,38 +262,113 @@ interface ProjectTask {
         <mat-tab label="AI Analysis">
           <div class="tab-content">
             <div class="analysis-section">
+              <!-- File Selection for Processing -->
+              <mat-card class="file-selection-card">
+                <mat-card-header>
+                  <mat-card-title>Select Files for AI Processing</mat-card-title>
+                  <mat-card-subtitle>Choose which files to process with AI agents</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="file-selection" *ngIf="project.files.length > 0">
+                    <div class="selection-header">
+                      <mat-checkbox 
+                        [checked]="areAllFilesSelected()" 
+                        [indeterminate]="areSomeFilesSelected() && !areAllFilesSelected()"
+                        (change)="toggleAllFiles($event)">
+                        Select All Files
+                      </mat-checkbox>
+                      <span class="selection-count">
+                        {{ getSelectedFilesCount() }} of {{ project.files.length }} files selected
+                      </span>
+                    </div>
+                    
+                    <div class="files-list">
+                      <div class="file-item" *ngFor="let file of project.files">
+                        <mat-checkbox 
+                          [(ngModel)]="file.selected"
+                          [disabled]="file.status === 'processing'">
+                        </mat-checkbox>
+                        <mat-icon class="file-icon">{{ getFileIcon(file.type) }}</mat-icon>
+                        <div class="file-details">
+                          <div class="file-name">{{ file.name }}</div>
+                          <div class="file-meta">
+                            {{ formatFileSize(file.size) }} • {{ file.type }}
+                          </div>
+                        </div>
+                        <div class="file-status">
+                          <span class="status-indicator" [class]="'status-' + file.status">
+                            {{ file.status | titlecase }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="processing-actions" *ngIf="getSelectedFilesCount() > 0 && project.aiAgentConfig">
+                      <button 
+                        mat-raised-button 
+                        color="primary" 
+                        (click)="startLLMProcessing()"
+                        [disabled]="isProcessing">
+                        <mat-icon>auto_fix_high</mat-icon>
+                        Process {{ getSelectedFilesCount() }} Files with AI
+                      </button>
+                      <p class="processing-note">
+                        Files will be processed using: <strong>{{ project.aiAgentConfig.name || 'Selected AI Agent' }}</strong>
+                      </p>
+                    </div>
+
+                    <div class="no-agent-warning" *ngIf="getSelectedFilesCount() > 0 && !project.aiAgentConfig">
+                      <mat-icon>warning</mat-icon>
+                      <span>Please configure an AI agent in the "AI Config" tab before processing files.</span>
+                    </div>
+                  </div>
+
+                  <div class="empty-files" *ngIf="project.files.length === 0">
+                    <mat-icon class="empty-icon">folder_open</mat-icon>
+                    <h3>No files available</h3>
+                    <p>Upload files in the "Files" tab to start AI processing</p>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Quick Actions -->
               <mat-card class="analysis-card">
                 <mat-card-header>
-                  <mat-card-title>AI-Powered Analysis</mat-card-title>
+                  <mat-card-title>Quick AI Actions</mat-card-title>
                   <mat-card-subtitle>Generate insights and suggestions for your project</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                   <div class="analysis-actions">
-                    <button mat-raised-button color="primary">
-                      <mat-icon>auto_awesome</mat-icon>
-                      Analyze Code Quality
-                    </button>
-                    <button mat-raised-button color="accent">
+                    <button mat-raised-button color="accent" [disabled]="!hasProcessedFiles()">
                       <mat-icon>description</mat-icon>
                       Generate Documentation
                     </button>
-                    <button mat-stroked-button>
+                    <button mat-stroked-button [disabled]="!hasProcessedFiles()">
                       <mat-icon>bug_report</mat-icon>
                       Find Issues
                     </button>
+                    <button mat-stroked-button [disabled]="!hasProcessedFiles()">
+                      <mat-icon>assessment</mat-icon>
+                      Quality Report
+                    </button>
+                  </div>
+                  
+                  <div class="actions-note" *ngIf="!hasProcessedFiles()">
+                    <mat-icon>info</mat-icon>
+                    <span>Process files with AI first to enable these actions.</span>
                   </div>
                 </mat-card-content>
               </mat-card>
 
               <mat-card class="results-card">
                 <mat-card-header>
-                  <mat-card-title>Analysis Results</mat-card-title>
+                  <mat-card-title>Processing Results</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                   <div class="empty-state">
                     <mat-icon class="empty-icon">analytics</mat-icon>
-                    <h3>No analysis run yet</h3>
-                    <p>Run an AI analysis to get insights about your project</p>
+                    <h3>No processing results yet</h3>
+                    <p>Select files and run AI processing to see results here</p>
                   </div>
                 </mat-card-content>
               </mat-card>
@@ -536,6 +619,111 @@ interface ProjectTask {
       gap: 24px;
     }
 
+    .file-selection-card {
+      margin-bottom: 24px;
+    }
+
+    .selection-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .selection-count {
+      color: #666;
+      font-size: 0.875rem;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .file-item:last-child {
+      border-bottom: none;
+    }
+
+    .file-item .file-icon {
+      color: #1976d2;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .file-item .file-details {
+      flex: 1;
+    }
+
+    .file-name {
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .file-meta {
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .processing-actions {
+      margin-top: 24px;
+      padding: 16px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #1976d2;
+    }
+
+    .processing-note {
+      margin: 8px 0 0 0;
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .no-agent-warning {
+      margin-top: 24px;
+      padding: 16px;
+      background-color: #fff3e0;
+      border-radius: 8px;
+      border-left: 4px solid #ff9800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .no-agent-warning mat-icon {
+      color: #ff9800;
+    }
+
+    .empty-files {
+      text-align: center;
+      padding: 48px 24px;
+      color: #666;
+    }
+
+    .actions-note {
+      margin-top: 16px;
+      padding: 12px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .actions-note mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: #1976d2;
+    }
+
     .analysis-actions {
       display: flex;
       gap: 16px;
@@ -597,10 +785,13 @@ export class ProjectViewComponent implements OnInit {
   project: ProjectDetails | null = null;
   isEditMode = false;
   originalProject: ProjectDetails | null = null;
+  isProcessing = false;
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+    private llmService: LlmService
   ) {}
 
   ngOnInit(): void {
@@ -666,7 +857,13 @@ export class ProjectViewComponent implements OnInit {
           status: 'pending',
           dueDate: new Date('2025-08-15')
         }
-      ]
+      ],
+      aiAgentConfig: id === 'new' ? null : {
+        name: 'Code Quality Agent',
+        description: 'Analyzes code for best practices and improvements',
+        provider: 'OpenAI',
+        model: 'gpt-3.5-turbo'
+      }
     };
 
     // Store original for cancel functionality
@@ -739,5 +936,141 @@ export class ProjectViewComponent implements OnInit {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  // LLM Processing Methods
+  areAllFilesSelected(): boolean {
+    if (!this.project?.files || this.project.files.length === 0) return false;
+    return this.project.files.every(file => file.selected);
+  }
+
+  areSomeFilesSelected(): boolean {
+    if (!this.project?.files) return false;
+    return this.project.files.some(file => file.selected);
+  }
+
+  toggleAllFiles(event: any): void {
+    if (!this.project?.files) return;
+    const checked = event.checked;
+    this.project.files.forEach(file => {
+      if (file.status !== 'processing') {
+        file.selected = checked;
+      }
+    });
+  }
+
+  getSelectedFilesCount(): number {
+    if (!this.project?.files) return 0;
+    return this.project.files.filter(file => file.selected).length;
+  }
+
+  hasProcessedFiles(): boolean {
+    if (!this.project?.files) return false;
+    return this.project.files.some(file => file.status === 'processed');
+  }
+
+  startLLMProcessing(): void {
+    if (!this.project || this.isProcessing) return;
+
+    const selectedFiles = this.project.files.filter(file => file.selected);
+    if (selectedFiles.length === 0) {
+      alert('Please select files to process');
+      return;
+    }
+
+    if (!this.project.aiAgentConfig) {
+      alert('Please configure an AI agent first');
+      return;
+    }
+
+    this.isProcessing = true;
+
+    // Start LLM processing
+    this.llmService.processFiles({
+      projectId: this.project.id,
+      fileIds: selectedFiles.map(file => file.id),
+      aiAgentConfig: this.project.aiAgentConfig
+    }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          // Open progress dialog
+          const dialogData: LLMProgressDialogData = {
+            jobId: response.jobId,
+            projectName: this.project!.name,
+            totalFiles: selectedFiles.length
+          };
+
+          const dialogRef = this.dialog.open(LlmProgressDialogComponent, {
+            width: '600px',
+            disableClose: true,
+            data: dialogData
+          });
+
+          // Update file status to processing
+          selectedFiles.forEach(file => {
+            file.status = 'processing';
+            file.selected = false;
+          });
+
+          dialogRef.afterClosed().subscribe((result) => {
+            this.isProcessing = false;
+            
+            if (result && result.data) {
+              // Update file statuses based on results
+              this.updateFileStatusesFromResults(result.data, selectedFiles);
+            } else {
+              // Reset status if cancelled or error
+              selectedFiles.forEach(file => {
+                if (file.status === 'processing') {
+                  file.status = 'uploaded';
+                }
+              });
+            }
+          });
+        } else {
+          this.isProcessing = false;
+          alert('Failed to start processing: ' + response.message);
+        }
+      },
+      error: (error) => {
+        this.isProcessing = false;
+        console.error('Error starting LLM processing:', error);
+        alert('Failed to start processing. Please try again.');
+        
+        // Reset file status
+        selectedFiles.forEach(file => {
+          if (file.status === 'processing') {
+            file.status = 'uploaded';
+          }
+        });
+      }
+    });
+  }
+
+  private updateFileStatusesFromResults(resultData: any, processedFiles: ProjectFile[]): void {
+    if (!resultData.results || !resultData.errors) return;
+
+    // Mark successful files as processed
+    resultData.results.forEach((result: any) => {
+      const file = processedFiles.find(f => f.id === result.fileId);
+      if (file) {
+        file.status = 'processed';
+      }
+    });
+
+    // Mark failed files as error
+    resultData.errors.forEach((error: any) => {
+      const file = processedFiles.find(f => f.id === error.fileId);
+      if (file) {
+        file.status = 'error';
+      }
+    });
+
+    // Mark any remaining processing files as uploaded (fallback)
+    processedFiles.forEach(file => {
+      if (file.status === 'processing') {
+        file.status = 'uploaded';
+      }
+    });
   }
 }

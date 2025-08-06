@@ -13,6 +13,7 @@ import fileRoutes from './routes/files.js';
 import healthRoutes from './routes/health.js';
 import agentRoutes from './routes/agents.js';
 import settingsRoutes from './routes/settings.js';
+import llmRoutes from './routes/llm.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -72,6 +73,7 @@ app.use('/api/v1/projects', projectRoutes);
 app.use('/api/v1/files', fileRoutes);
 app.use('/api/v1/agents', agentRoutes);
 app.use('/api/v1/settings', settingsRoutes);
+app.use('/api/v1/llm', llmRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -84,7 +86,8 @@ app.get('/', (req, res) => {
       projects: '/api/v1/projects',
       files: '/api/v1/files',
       agents: '/api/v1/agents',
-      settings: '/api/v1/settings'
+      settings: '/api/v1/settings',
+      llm: '/api/v1/llm'
     }
   });
 });
@@ -99,7 +102,8 @@ app.use('*', (req, res) => {
       '/api/v1/projects',
       '/api/v1/files',
       '/api/v1/agents',
-      '/api/v1/settings'
+      '/api/v1/settings',
+      '/api/v1/llm'
     ]
   });
 });

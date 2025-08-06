@@ -289,7 +289,7 @@ class SettingsController {
           message: 'Connection refused',
           details: 'Unable to connect to the LLM endpoint. Please check the URL.'
         };
-      } else if (error.code === 'ETIMEDOUT') {
+      } else if (error.code === 'ETIMEDOUT' || error.code === 'ECONNABORTED') {
         return {
           success: false,
           message: 'Connection timeout',
