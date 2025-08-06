@@ -13,6 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,8 +21,10 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { Project, ProjectService, CreateProjectRequest, UpdateProjectRequest } from '../../services/project.service';
 import { NotificationService } from '../../services/notification.service';
+import { SettingsService, Settings } from '../../services/settings.service';
 import { ProjectModalComponent, ProjectModalData, ProjectModalResult } from '../project-modal/project-modal.component';
 import { ConfirmationDialogComponent, ConfirmationDialogData } from '../confirmation-dialog/confirmation-dialog.component';
+import { SettingsComponent } from '../settings/settings.component';
 
 @Component({
   selector: 'app-main-ui',
@@ -41,18 +44,31 @@ import { ConfirmationDialogComponent, ConfirmationDialogData } from '../confirma
     MatMenuModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatDividerModule
+    MatDividerModule,
+    MatTooltipModule
   ],
   template: `
     <div class="main-container">
       <div class="header-section">
-        <h1 class="page-title">
-          <mat-icon class="title-icon">dashboard</mat-icon>
-          {{ isProjectsView ? 'Projects Dashboard' : 'Welcome to Vibe Coding Accelerator' }}
-        </h1>
-        <p class="page-subtitle">
-          {{ isProjectsView ? 'Manage and track your development projects' : 'Accelerate your software development with AI-powered assistance' }}
-        </p>
+        <div class="header-content">
+          <div class="title-section">
+            <h1 class="page-title">
+              <mat-icon class="title-icon">dashboard</mat-icon>
+              {{ isProjectsView ? 'Projects Dashboard' : 'Welcome to Vibe Coding Accelerator' }}
+            </h1>
+            <p class="page-subtitle">
+              {{ isProjectsView ? 'Manage and track your development projects' : 'Accelerate your software development with AI-powered assistance' }}
+            </p>
+          </div>
+          <div class="header-actions">
+            <button mat-icon-button 
+                    (click)="openSettings()" 
+                    matTooltip="Settings"
+                    class="settings-button">
+              <mat-icon>settings</mat-icon>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="actions-section" *ngIf="!isProjectsView">
@@ -281,7 +297,34 @@ import { ConfirmationDialogComponent, ConfirmationDialogData } from '../confirma
 
     .header-section {
       margin-bottom: 32px;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .title-section {
+      flex: 1;
       text-align: center;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .settings-button {
+      color: #666;
+      transition: color 0.2s ease;
+    }
+
+    .settings-button:hover {
+      color: #1976d2;
     }
 
     .page-title {
@@ -902,5 +945,25 @@ export class MainUiComponent implements OnInit, OnDestroy {
       default:
         return 'folder';
     }
+  }
+
+  /**
+   * Open settings dialog
+   */
+  openSettings(): void {
+    const dialogRef = this.dialog.open(SettingsComponent, {
+      width: '800px',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      disableClose: false,
+      hasBackdrop: true,
+      backdropClass: 'settings-backdrop'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.notificationService.showSuccess('Settings updated successfully');
+      }
+    });
   }
 }

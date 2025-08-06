@@ -10,13 +10,13 @@
 Allow users to set, edit, and test the OpenAPI endpoint and API key for LLM access, storing values in `.env` and validating connectivity.
 
 ## Acceptance Criteria
-- [ ] User is prompted for endpoint and API key on first use
-- [ ] Values are stored in `.env` file
-- [ ] User can edit values via settings
-- [ ] "Test Access" button validates endpoint and API key
-- [ ] User receives modal feedback on success/failure
-- [ ] Detailed errors are logged to the console
-- [ ] Unit/integration tests for backend and frontend
+- [x] User is prompted for endpoint and API key on first use
+- [x] Values are stored in `.env` file
+- [x] User can edit values via settings
+- [x] "Test Access" button validates endpoint and API key
+- [x] User receives modal feedback on success/failure
+- [x] Detailed errors are logged to the console
+- [x] Unit/integration tests for backend and frontend
 
 ## Technical Requirements
 ### Implementation Details
