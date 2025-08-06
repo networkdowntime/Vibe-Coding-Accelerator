@@ -14,13 +14,13 @@
         }
       },
       "root": "",
-      "sourceRoot": "src",
+      "sourceRoot": "frontend",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "browser": "src/main.ts",
+            "browser": "frontend/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -33,7 +33,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "frontend/styles.scss"
             ]
           },
           "configurations": {
@@ -94,7 +94,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "frontend/styles.scss"
             ]
           }
         }
