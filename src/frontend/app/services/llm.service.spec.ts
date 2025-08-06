@@ -263,7 +263,7 @@ describe('LlmService', () => {
 
   describe('error handling', () => {
     it('should handle client-side errors', () => {
-      const errorEvent = new ErrorEvent('Network error');
+      const errorEvent = new ErrorEvent('Network error', { message: 'Network error' });
 
       service.getJobStatus('test-job-id').subscribe({
         next: () => fail('Should have failed'),

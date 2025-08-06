@@ -1,9 +1,6 @@
 {
+  "ai-agent": "githubCopilot",
   "tech-stack": [
-    "tech-java.instructions.md",
-    "tech-code-commenting.instructions.md",
-    "tech-general-coding.instructions.md",
-    "tech-springboot.instructions.md"
-  ],
-  "ai-agent": "githubCopilot"
+    "tech-java.instructions.md"
+  ]
 }

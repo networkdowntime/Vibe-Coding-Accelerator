@@ -59,7 +59,9 @@ describe('ProjectListComponent', () => {
 
       expect(mockProjectService.getAllProjects).toHaveBeenCalled();
       expect(component.projects).toEqual(mockProjects);
-      expect(component.filteredProjects).toEqual(mockProjects);
+      // Projects should be sorted by recent (testProject2 first since it's newer)
+      expect(component.filteredProjects[0].name).toBe('testProject2');
+      expect(component.filteredProjects[1].name).toBe('testProject1');
       expect(component.isLoading).toBeFalse();
     });
 

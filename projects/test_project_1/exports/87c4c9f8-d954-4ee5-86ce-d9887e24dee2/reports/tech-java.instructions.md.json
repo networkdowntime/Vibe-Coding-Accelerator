@@ -1,0 +1,52 @@
+{
+  "techStackFile": "tech-java.instructions.md",
+  "appliedGuidelines": [
+    {
+      "id": "GDL-001",
+      "reason": "Incorporated priorities order and security emphasis consistent with project guidelines."
+    },
+    {
+      "id": "GDL-002",
+      "reason": "Updated Java version to 16 as per project guidelines."
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Revised access modifiers guideline to prefer public by default, minimizing private, matching project guidelines."
+    },
+    {
+      "id": "GDL-004",
+      "reason": "Updated design patterns guideline to aggressively apply Factory, Builder, Strategy, Observer as per project guidelines."
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Changed encapsulation guideline to keep implementation details public and avoid helper methods, per project guidelines."
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Spring Boot version noted in project guidelines but not applicable to this language-level file; acknowledged but no direct change."
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Configuration preference for properties over YAML noted in project guidelines; referenced in project but no direct YAML mention in tech stack file."
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Repository pattern preference for SQL prepared statements noted; tech stack file references repository layer but does not contradict."
+    }
+  ],
+  "unappliedGuidelines": [
+    {
+      "id": "GDL-006",
+      "reason": "Spring Boot version guideline is framework-specific and not applicable to core Java language instruction file."
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Configuration guideline prefers properties over YAML; tech stack instruction uses application.yml but does not contradict; no direct YAML removal applied."
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Repository pattern guideline prefers SQL prepared statements over Spring Data JPA; tech stack instruction mentions repository layer but does not specify repository implementation; no contradiction."
+    }
+  ],
+  "processingTime": "2025-08-06T21:28:01.289Z"
+}

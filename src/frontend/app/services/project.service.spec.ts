@@ -55,7 +55,7 @@ describe('ProjectService', () => {
       service.getAllProjects().subscribe({
         next: () => fail('should have failed'),
         error: (error) => {
-          expect(error.message).toContain('Server Error');
+          expect(error.message).toContain('Server error');
         }
       });
 

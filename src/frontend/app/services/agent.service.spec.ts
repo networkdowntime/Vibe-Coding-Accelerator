@@ -116,7 +116,7 @@ describe('AgentService', () => {
 
       const req = httpMock.expectOne(`/api/projects/${projectName}/tech-stack`);
       expect(req.request.method).toBe('GET');
-      req.flush({ techStack: expectedTechStack });
+      req.flush({ techStack: expectedTechStack, aiAgent: null });
     });
 
     it('should return empty array on error', () => {
