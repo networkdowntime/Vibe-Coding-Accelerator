@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, BehaviorSubject, timer, EMPTY } from 'rxjs';
+import { Observable, BehaviorSubject, timer, EMPTY, throwError } from 'rxjs';
 import { catchError, tap, switchMap, takeWhile, finalize } from 'rxjs/operators';
 
 export interface LLMJobStatus {
@@ -233,6 +233,20 @@ export class LlmService {
    */
   private updateProcessingState(state: ProcessingState): void {
     this.processingStateSubject.next(state);
+  }
+
+  /**
+   * Download AI agent config zip file
+   */
+  downloadConfig(jobId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/download/${jobId}`, {
+      responseType: 'blob'
+    }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        this.handleError(error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**

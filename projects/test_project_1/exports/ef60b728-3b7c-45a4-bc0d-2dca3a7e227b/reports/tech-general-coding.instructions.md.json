@@ -1,0 +1,64 @@
+{
+  "techStackFile": "tech-general-coding.instructions.md",
+  "appliedGuidelines": [
+    {
+      "id": "GDL-001",
+      "reason": "Updated Priorities In Order to match Project Guidelines priorities and wording."
+    },
+    {
+      "id": "GDL-002",
+      "reason": "Not applicable - Java version guideline is framework-specific and not present in this general tech stack instruction."
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Not applicable - Access Modifiers guideline is Java-specific and not present in this general tech stack instruction."
+    },
+    {
+      "id": "GDL-004",
+      "reason": "Added design patterns guideline wording to Code Organization & Architecture section to conform with Project Guidelines."
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Not applied - Encapsulation guideline contradicts existing style; Project Guidelines prefer public implementation details, but existing file does not mention this explicitly."
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Not applicable - Spring Boot version guideline is framework-specific and not present in this general tech stack instruction."
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Not applicable - Configuration format preference is framework-specific and not present in this general tech stack instruction."
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Not applicable - Repository pattern guideline is framework-specific and not present in this general tech stack instruction."
+    }
+  ],
+  "unappliedGuidelines": [
+    {
+      "id": "GDL-002",
+      "reason": "Java version guideline is not relevant to this general tech stack instruction file."
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Access modifiers guideline is Java-specific and not applicable here."
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Encapsulation guideline contradicts common best practices and is not reflected in existing file; not applied to preserve existing style."
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Spring Boot version guideline is framework-specific and not relevant here."
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Configuration format preference is framework-specific and not relevant here."
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Repository pattern guideline is framework-specific and not relevant here."
+    }
+  ],
+  "processingTime": "2025-08-06T16:41:34.453Z"
+}

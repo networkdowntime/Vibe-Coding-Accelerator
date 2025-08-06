@@ -189,23 +189,22 @@ export class ProjectViewComponent implements OnInit, OnDestroy {
    */
   downloadResults(): void {
     if (this.processingState.currentJob && this.processingState.currentJob.status === 'completed') {
-      this.llmService.getResults(this.processingState.currentJob.jobId).subscribe({
-        next: (results) => {
-          // Create and download a JSON file with the results
-          const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+      this.llmService.downloadConfig(this.processingState.currentJob.jobId).subscribe({
+        next: (blob) => {
+          // Create and download the zip file
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${this.projectId}-config-results.json`;
+          a.download = `ai-agent-config-${this.processingState.currentJob!.jobId}.zip`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
-          console.log('Generated config results downloaded');
+          console.log('AI agent config zip file downloaded');
         },
         error: (error) => {
-          console.error('Error downloading results:', error);
-          this.errorMessage = error.message || 'Failed to download results';
+          console.error('Error downloading config:', error);
+          this.errorMessage = error.message || 'Failed to download AI agent config';
           // Clear error after 5 seconds
           setTimeout(() => {
             this.errorMessage = '';

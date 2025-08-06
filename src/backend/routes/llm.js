@@ -17,4 +17,7 @@ router.post('/retry/:jobId', llmController.retryProcessing);
 // Get processed files
 router.get('/results/:jobId', llmController.getResults);
 
+// Download AI agent config zip file
+router.get('/download/:jobId', llmController.downloadConfig);
+
 module.exports = router;

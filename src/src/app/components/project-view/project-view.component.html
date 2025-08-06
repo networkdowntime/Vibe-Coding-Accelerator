@@ -86,14 +86,15 @@
               Retry
             </button>
             
-            <!-- Download Results Button -->
+            <!-- Download AI Agent Config Button -->
             <button 
               *ngIf="processingState.currentJob?.status === 'completed'"
               (click)="downloadResults()"
               class="btn btn-success download-btn"
-              type="button">
+              type="button"
+              title="Download AI agent configuration zip file">
               <i class="fas fa-download"></i>
-              Download Results
+              Download AI Config
             </button>
           </div>
         </div>

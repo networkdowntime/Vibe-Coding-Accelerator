@@ -5,7 +5,7 @@ applyTo: "**/*.java"
 
 # Java Development Standards
 
-## 🏗️ Architecture & Navigation
+## 🎗️ Architecture & Navigation
 - **Root Standards**: [General Coding Standards](./tech-general-coding.instructions.md)
 - **Security Guidelines**: [Security & OWASP](./security-owasp.instructions.md)
 - **Performance Guidelines**: [Performance Optimization](./tech-performance-optimization.instructions.md)
@@ -25,16 +25,16 @@ applyTo: "**/*.java"
 
 ### Code Quality & Modern Java Features
 - **Java Version**: Use Java 17+ features (records, sealed classes, pattern matching, text blocks)
-- **Access Modifiers**: Use appropriate access levels (`private` by default, minimize `public`)
+- **Access Modifiers**: Use appropriate access levels (`public` by default, minimize `private`)
 - **Immutability**: Prefer `final` for variables, use immutable objects when possible
 - **Null Safety**: Use `Optional<T>` for potentially null return values, avoid returning null
 - **Resource Management**: Always use try-with-resources for automatic resource cleanup
 
 ### Object-Oriented Design
 - **SOLID Principles**: Apply Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
-- **Design Patterns**: Use appropriate patterns (Factory, Builder, Strategy, Observer) when they solve real problems
+- **Design Patterns**: Aggressively apply patterns (Factory, Builder, Strategy, Observer)
 - **Composition over Inheritance**: Prefer composition and interfaces over inheritance hierarchies
-- **Encapsulation**: Keep implementation details private, expose behavior through well-defined interfaces
+- **Encapsulation**: Keep implementation details public, we hate helper methods
 
 ### Collections & Streams
 - **Collections Framework**: Use appropriate collection types (List, Set, Map) based on use case
@@ -54,48 +54,48 @@ applyTo: "**/*.java"
 src/
 ├── main/
 │   ├── java/
-│   │   └── com/company/project/
-│   │       ├── Application.java           # Main application class
-│   │       ├── config/                    # Configuration classes
-│   │       │   ├── DatabaseConfig.java
-│   │       │   └── SecurityConfig.java
-│   │       ├── controller/                # REST controllers
-│   │       │   ├── BaseController.java
-│   │       │   └── UserController.java
-│   │       ├── service/                   # Business logic
-│   │       │   ├── UserService.java
-│   │       │   └── impl/
-│   │       │       └── UserServiceImpl.java
-│   │       ├── repository/                # Data access layer
-│   │       │   ├── UserRepository.java
-│   │       │   └── impl/
-│   │       │       └── UserRepositoryImpl.java
-│   │       ├── model/                     # Domain models
-│   │       │   ├── entity/                # JPA entities
-│   │       │   ├── dto/                   # Data transfer objects
-│   │       │   └── enums/                 # Enums
-│   │       ├── exception/                 # Custom exceptions
-│   │       │   ├── BusinessException.java
-│   │       │   └── handler/
-│   │       │       └── GlobalExceptionHandler.java
-│   │       └── util/                      # Utility classes
-│   │           ├── DateUtils.java
-│   │           └── ValidationUtils.java
-│   └── resources/
-│       ├── application.yml                # Configuration files
-│       ├── logback.xml                    # Logging configuration
-│       └── static/                        # Static resources
-└── test/
-    ├── java/
-    │   └── com/company/project/
-    │       ├── integration/               # Integration tests
-    │       ├── unit/                      # Unit tests
-    │       └── TestApplication.java       # Test configuration
-    └── resources/
-        └── application-test.yml           # Test configuration
+│   │   └─ com/company/project/
+│   │       ├─ Application.java           # Main application class
+│   │       ├─ config/                    # Configuration classes
+│   │       │   ├─ DatabaseConfig.java
+│   │       │   └─ SecurityConfig.java
+│   │       ├─ controller/                # REST controllers
+│   │       │   ├─ BaseController.java
+│   │       │   └─ UserController.java
+│   │       ├─ service/                   # Business logic
+│   │       │   ├─ UserService.java
+│   │       │   └─ impl/
+│   │       │       └─ UserServiceImpl.java
+│   │       ├─ repository/                # Data access layer
+│   │       │   ├─ UserRepository.java
+│   │       │   └─ impl/
+│   │       │       └─ UserRepositoryImpl.java
+│   │       ├─ model/                     # Domain models
+│   │       │   ├─ entity/                # JPA entities
+│   │       │   ├─ dto/                   # Data transfer objects
+│   │       │   └─ enums/                 # Enums
+│   │       ├─ exception/                 # Custom exceptions
+│   │       │   ├─ BusinessException.java
+│   │       │   └─ handler/
+│   │       │       └─ GlobalExceptionHandler.java
+│   │       └─ util/                      # Utility classes
+│   │           ├─ DateUtils.java
+│   │           └─ ValidationUtils.java
+│   └─ resources/
+│       ├─ application.yml                # Configuration files
+│       ├─ logback.xml                    # Logging configuration
+│       └─ static/                        # Static resources
+└─ test/
+    ├─ java/
+    │   └─ com/company/project/
+    │       ├─ integration/               # Integration tests
+    │       ├─ unit/                      # Unit tests
+    │       └─ TestApplication.java       # Test configuration
+    └─ resources/
+        └─ application-test.yml           # Test configuration
 ```
 
-## 🧪 Java Testing Standards
+## 🧊 Java Testing Standards
 
 ### Testing Framework & Tools
 - **Primary Framework**: JUnit 5 with Mockito for mocking
@@ -118,7 +118,7 @@ src/
 - **Test Coverage**: Focus on business logic, critical paths, and edge cases
 - **Performance**: Keep tests fast, use parallel execution when possible
 
-## 🚫 Java Anti-Patterns
+## 🛑 Java Anti-Patterns
 
 ### Code Smells to Avoid
 - **God Classes**: Avoid classes with too many responsibilities
@@ -150,7 +150,7 @@ src/
 - **Security**: Input validation, secure coding practices, dependency scanning
 - **Performance**: JVM tuning, garbage collection optimization, profiling
 
-## 📚 Reference Links
+## 📖 Reference Links
 
 ### Official Documentation
 - [Oracle Java Documentation](https://docs.oracle.com/en/java/)

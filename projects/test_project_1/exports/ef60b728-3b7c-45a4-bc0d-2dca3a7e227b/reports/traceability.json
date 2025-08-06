@@ -1,0 +1,92 @@
+{
+  "jobId": "ef60b728-3b7c-45a4-bc0d-2dca3a7e227b",
+  "completedAt": "2025-08-06T16:42:35.782Z",
+  "projectCompliance": "100%",
+  "totalTechStacks": 4,
+  "totalGuidelines": 8,
+  "totalAppliedGuidelines": 8,
+  "totalUnappliedGuidelines": 0,
+  "appliedGuidelines": [
+    {
+      "id": "GDL-001",
+      "reason": "Incorporated project priorities and security emphasis; existing content updated to align with priorities order.",
+      "appliedInFiles": [
+        "tech-java.instructions.md",
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-002",
+      "reason": "Updated Spring Boot version and Java version to 2.8 and Java 16 as per project guidelines.",
+      "appliedInFiles": [
+        "tech-java.instructions.md",
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-003",
+      "reason": "Updated access modifiers guideline to prefer public by default and minimize private, replacing contradictory tech stack content.",
+      "appliedInFiles": [
+        "tech-java.instructions.md",
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-004",
+      "reason": "Confirmed design patterns usage aligns; existing content already applies aggressive pattern usage.",
+      "appliedInFiles": [
+        "tech-java.instructions.md",
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-005",
+      "reason": "Removed contradictory encapsulation guideline from tech stack instruction to conform with project guideline preferring public implementation details.",
+      "appliedInFiles": [
+        "tech-java.instructions.md",
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-006",
+      "reason": "Applied Spring Boot version 2.8 with Java 16 as per project guidelines, replacing tech stack's 3.x and Java 17+.",
+      "appliedInFiles": [
+        "tech-java.instructions.md",
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-007",
+      "reason": "Updated configuration preference to properties over YAML, replacing contradictory YAML preference.",
+      "appliedInFiles": [
+        "tech-java.instructions.md",
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    },
+    {
+      "id": "GDL-008",
+      "reason": "Replaced Spring Data JPA repository usage with project guideline to avoid Spring Data JPA repositories and prefer SQL prepared statements.",
+      "appliedInFiles": [
+        "tech-java.instructions.md",
+        "tech-code-commenting.instructions.md",
+        "tech-general-coding.instructions.md",
+        "tech-springboot.instructions.md"
+      ]
+    }
+  ],
+  "unappliedGuidelines": []
+}
