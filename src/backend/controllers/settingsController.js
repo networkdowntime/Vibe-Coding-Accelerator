@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
 import axios from 'axios';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -9,7 +10,7 @@ const __dirname = path.dirname(__filename);
 class SettingsController {
   constructor() {
     this.envPath = path.join(__dirname, '../../.env');
-    
+
     // Bind methods to maintain 'this' context
     this.getSettings = this.getSettings.bind(this);
     this.updateSettings = this.updateSettings.bind(this);
@@ -22,7 +23,7 @@ class SettingsController {
   async getSettings(req, res) {
     try {
       const settings = await this.readEnvSettings();
-      
+
       // Don't send sensitive data to frontend
       const safeSettings = {
         llmEndpoint: settings.LLM_ENDPOINT || '',
@@ -149,7 +150,7 @@ class SettingsController {
     try {
       const envContent = await fs.readFile(this.envPath, 'utf8');
       const settings = {};
-      
+
       envContent.split('\n').forEach(line => {
         const trimmedLine = line.trim();
         if (trimmedLine && !trimmedLine.startsWith('#')) {
@@ -159,7 +160,7 @@ class SettingsController {
           }
         }
       });
-      
+
       return settings;
     } catch (error) {
       if (error.code === 'ENOENT') {
@@ -176,7 +177,7 @@ class SettingsController {
   async updateEnvSettings(newSettings) {
     try {
       let existingSettings = {};
-      
+
       try {
         existingSettings = await this.readEnvSettings();
       } catch (error) {
@@ -186,14 +187,14 @@ class SettingsController {
 
       // Merge settings
       const mergedSettings = { ...existingSettings, ...newSettings };
-      
+
       // Convert to .env format
-      const envContent = Object.entries(mergedSettings)
+      const envContent = `${Object.entries(mergedSettings)
         .map(([key, value]) => `${key}=${value}`)
-        .join('\n') + '\n';
+        .join('\n')}\n`;
 
       await fs.writeFile(this.envPath, envContent, 'utf8');
-      
+
       console.log('Settings updated successfully');
     } catch (error) {
       console.error('Error updating .env file:', error);
@@ -208,7 +209,7 @@ class SettingsController {
     try {
       // Detect if this is an Azure OpenAI endpoint or standard OpenAI
       const isAzureOpenAI = endpoint.includes('openai.azure.com');
-      
+
       let requestUrl;
       let headers;
       let requestBody;
@@ -282,7 +283,7 @@ class SettingsController {
       }
     } catch (error) {
       console.error('LLM connection test failed:', error);
-      
+
       if (error.code === 'ECONNREFUSED') {
         return {
           success: false,

@@ -18,8 +18,6 @@ class AgentsController {
    */
   async getAvailableAgents(req, res) {
     try {
-      const agentsDir = path.join(__dirname, '../../../ai_agents');
-      
       // For now, return predefined agents based on README
       // In the future, this could scan subdirectories dynamically
       const agents = [
@@ -68,25 +66,30 @@ class AgentsController {
   async getTechStackOptions(req, res) {
     try {
       const instructionsDir = path.join(__dirname, '../../../.github/instructions');
-      
+
       // Read all instruction files
       const files = await fsPromises.readdir(instructionsDir);
       const instructionFiles = files.filter(file => file.endsWith('.instructions.md'));
-      
+
       const techStacks = [];
-      
+
       for (const file of instructionFiles) {
         // Simple implementation without helper methods for now
         let name = file.replace('.instructions.md', '').replace(/^tech-/, '');
-        name = name.split('-').map(word => 
+        name = name.split('-').map(word =>
           word.charAt(0).toUpperCase() + word.slice(1)
         ).join(' ');
-        
+
         let category = 'Other';
         if (file.startsWith('tech-')) {
           if (file.includes('angular') || file.includes('react') || file.includes('ui-ux')) {
             category = 'Frontend';
-          } else if (file.includes('java') || file.includes('spring') || file.includes('quarkus') || file.includes('python')) {
+          } else if (
+            file.includes('java') ||
+            file.includes('spring') ||
+            file.includes('quarkus') ||
+            file.includes('python')
+          ) {
             category = 'Backend';
           } else if (file.includes('javascript') || file.includes('typescript')) {
             category = 'Language';
@@ -100,7 +103,7 @@ class AgentsController {
         } else if (file.startsWith('spec-workflow')) {
           category = 'Process';
         }
-        
+
         techStacks.push({
           id: file.replace('.instructions.md', ''),
           name,
@@ -109,7 +112,7 @@ class AgentsController {
           filename: file
         });
       }
-      
+
       // Sort by category and name
       techStacks.sort((a, b) => {
         if (a.category !== b.category) {
@@ -261,12 +264,12 @@ class AgentsController {
   /**
    * Extract tech stack name from filename and content
    */
-  extractTechStackName(filename, content) {
+  extractTechStackName(filename, _content) {
     // Remove file extension and prefix
     let name = filename.replace('.instructions.md', '').replace(/^tech-/, '');
-    
+
     // Convert kebab-case to title case
-    name = name.split('-').map(word => 
+    name = name.split('-').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
 
@@ -317,10 +320,19 @@ class AgentsController {
    */
   extractCategory(filename) {
     if (filename.startsWith('tech-')) {
-      if (filename.includes('angular') || filename.includes('react') || filename.includes('ui-ux')) {
+      if (
+        filename.includes('angular') ||
+        filename.includes('react') ||
+        filename.includes('ui-ux')
+      ) {
         return 'Frontend';
       }
-      if (filename.includes('java') || filename.includes('spring') || filename.includes('quarkus') || filename.includes('python')) {
+      if (
+        filename.includes('java') ||
+        filename.includes('spring') ||
+        filename.includes('quarkus') ||
+        filename.includes('python')
+      ) {
         return 'Backend';
       }
       if (filename.includes('javascript') || filename.includes('typescript')) {

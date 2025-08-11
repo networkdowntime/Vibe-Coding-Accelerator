@@ -4,8 +4,6 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { config } from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 // Import routes
 import projectRoutes from './routes/projects.js';
@@ -14,14 +12,11 @@ import healthRoutes from './routes/health.js';
 import agentRoutes from './routes/agents.js';
 import settingsRoutes from './routes/settings.js';
 import llmRoutes from './routes/llm.js';
+import traceabilityRoutes from './routes/traceability.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/requestLogger.js';
-
-// ES module __dirname equivalent
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Load environment variables
 config();
@@ -37,16 +32,16 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https:"],
-    },
-  },
+      imgSrc: ["'self'", 'data:', 'https:']
+    }
+  }
 }));
 
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later',
+  message: 'Too many requests from this IP, please try again later'
 });
 app.use(limiter);
 
@@ -56,7 +51,7 @@ app.use(cors({
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Body parsing middleware
@@ -74,6 +69,7 @@ app.use('/api/v1/files', fileRoutes);
 app.use('/api/v1/agents', agentRoutes);
 app.use('/api/v1/settings', settingsRoutes);
 app.use('/api/v1/llm', llmRoutes);
+app.use('/api/v1/traceability', traceabilityRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -87,7 +83,8 @@ app.get('/', (req, res) => {
       files: '/api/v1/files',
       agents: '/api/v1/agents',
       settings: '/api/v1/settings',
-      llm: '/api/v1/llm'
+      llm: '/api/v1/llm',
+      traceability: '/api/v1/traceability'
     }
   });
 });
@@ -103,7 +100,8 @@ app.use('*', (req, res) => {
       '/api/v1/files',
       '/api/v1/agents',
       '/api/v1/settings',
-      '/api/v1/llm'
+      '/api/v1/llm',
+      '/api/v1/traceability'
     ]
   });
 });
@@ -114,26 +112,38 @@ app.use(errorHandler);
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    console.log('Server closed');
+  if (server) {
+    server.close(() => {
+      console.log('Server closed');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 process.on('SIGINT', () => {
   console.log('SIGINT received, shutting down gracefully');
-  server.close(() => {
-    console.log('Server closed');
+  if (server) {
+    server.close(() => {
+      console.log('Server closed');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
-// Start server
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Vibe Coding Accelerator API server is running on port ${PORT}`);
-  console.log(`📖 API Documentation: http://localhost:${PORT}/`);
-  console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:4200'}`);
-});
+// Only start server if not in test environment
+let server;
+if (process.env.NODE_ENV !== 'test') {
+  // Start server
+  server = app.listen(PORT, () => {
+    console.log(`🚀 Vibe Coding Accelerator API server is running on port ${PORT}`);
+    console.log(`📖 API Documentation: http://localhost:${PORT}/`);
+    console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:4200'}`);
+  });
+}
 
 export default app;

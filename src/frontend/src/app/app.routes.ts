@@ -25,6 +25,10 @@ export const routes: Routes = [
     data: { mode: 'edit' }
   },
   {
+    path: 'project/:id/traceability',
+    loadComponent: () => import('./components/traceability-report/traceability-report.component').then(m => m.TraceabilityReportComponent)
+  },
+  {
     path: '**',
     redirectTo: '/projects'
   }

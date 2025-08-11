@@ -13,7 +13,7 @@ describe('Projects Controller Basic Tests', () => {
   beforeEach(() => {
     app = express();
     app.use(express.json());
-    
+
     // Simple test endpoint
     app.get('/health', (req, res) => {
       res.json({ status: 'ok' });
@@ -42,7 +42,7 @@ describe('Projects Controller Basic Tests', () => {
     const projectId = 'test-123';
     const originalPath = `/projects/${projectId}`;
     const deletedPath = `/projects/${projectId}.deleted`;
-    
+
     expect(deletedPath).toContain('.deleted');
     expect(deletedPath).toContain(projectId);
   });

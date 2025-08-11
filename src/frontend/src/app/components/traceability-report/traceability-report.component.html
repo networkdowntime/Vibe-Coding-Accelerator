@@ -1,0 +1,159 @@
+<div class="traceability-report-container">
+  <div class="header">
+    <h2>Traceability Report</h2>
+    <div class="actions">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="runConsistencyCheck()"
+        [disabled]="isRunningConsistencyCheck"
+        class="action-button">
+        <mat-icon>fact_check</mat-icon>
+        {{ isRunningConsistencyCheck ? 'Running Check...' : 'Run Consistency Check' }}
+      </button>
+      
+      <button 
+        mat-raised-button 
+        color="accent" 
+        (click)="generateReport()"
+        [disabled]="isGenerating"
+        class="action-button">
+        <mat-icon>description</mat-icon>
+        {{ isGenerating ? 'Generating...' : 'Generate Report' }}
+      </button>
+      
+      <button 
+        mat-button 
+        color="primary" 
+        (click)="downloadReport()"
+        [disabled]="!hasReport"
+        class="action-button">
+        <mat-icon>download</mat-icon>
+        Download
+      </button>
+    </div>
+  </div>
+
+  <!-- Consistency Check Status -->
+  <mat-card class="status-card" *ngIf="consistencyCheckStatus">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>fact_check</mat-icon>
+        Consistency Check Status
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="status-info">
+        <div class="status-line">
+          <strong>Status:</strong> 
+          <span [class]="'status-' + consistencyCheckStatus.status">
+            {{ formatConsistencyStatus(consistencyCheckStatus) }}
+          </span>
+        </div>
+        
+        <div class="progress-container" *ngIf="consistencyCheckStatus.status === 'processing' || consistencyCheckStatus.status === 'running'">
+          <mat-progress-bar 
+            mode="determinate" 
+            [value]="consistencyCheckStatus.progress">
+          </mat-progress-bar>
+          <span class="progress-text">{{ consistencyCheckStatus.progress }}%</span>
+        </div>
+        
+        <div class="status-line" *ngIf="consistencyCheckStatus.startTime">
+          <strong>Started:</strong> {{ formatDate(consistencyCheckStatus.startTime) }}
+        </div>
+        
+        <div class="status-line" *ngIf="consistencyCheckStatus.endTime">
+          <strong>Completed:</strong> {{ formatDate(consistencyCheckStatus.endTime) }}
+        </div>
+        
+        <div class="results-summary" *ngIf="consistencyCheckStatus.status === 'completed' && consistencyCheckStatus.results">
+          <strong>Results:</strong> {{ getResultsSummary(consistencyCheckStatus) }}
+        </div>
+        
+        <div class="error-info" *ngIf="consistencyCheckStatus.errors && consistencyCheckStatus.errors.length > 0">
+          <strong>Errors:</strong>
+          <ul>
+            <li *ngFor="let error of consistencyCheckStatus.errors">{{ error }}</li>
+          </ul>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Corrected Files -->
+  <mat-card class="corrected-files-card" *ngIf="consistencyCheckStatus?.status === 'completed' && getCorrectedFiles().length > 0">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>check_circle</mat-icon>
+        Corrected Files
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-expansion-panel *ngFor="let file of getCorrectedFiles()">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon class="correction-icon">edit</mat-icon>
+            {{ file.filename }}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ file.corrections.length }} correction(s)
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        
+        <div class="corrections-list">
+          <div class="correction-item" *ngFor="let correction of file.corrections">
+            <mat-icon class="small-icon">check</mat-icon>
+            {{ correction }}
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Report Content -->
+  <mat-card class="report-card" *ngIf="hasReport">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>description</mat-icon>
+        Traceability Report
+      </mat-card-title>
+      <mat-card-subtitle *ngIf="reportMetadata">
+        Generated: {{ formatDate(reportMetadata.generatedAt) }} | 
+        Completeness: {{ reportMetadata.completenessScore }}%
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="report-content" [innerHTML]="renderedContent"></div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- No Report Message -->
+  <mat-card class="no-report-card" *ngIf="!hasReport && !isGenerating">
+    <mat-card-content>
+      <div class="empty-state">
+        <mat-icon class="large-icon">description</mat-icon>
+        <h3>No Traceability Report Available</h3>
+        <p>Generate a new traceability report to view detailed information about your project's compliance and structure.</p>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="generateReport()">
+          <mat-icon>add</mat-icon>
+          Generate Report
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading States -->
+  <mat-card class="loading-card" *ngIf="isGenerating">
+    <mat-card-content>
+      <div class="loading-state">
+        <mat-spinner diameter="50"></mat-spinner>
+        <h3>Generating Traceability Report...</h3>
+        <p>This may take a few minutes depending on your project size.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

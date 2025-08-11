@@ -50,12 +50,12 @@ export const fileExists = async (filePath) => {
 export const getSafeFilePath = (basePath, ...pathSegments) => {
   const fullPath = path.resolve(basePath, ...pathSegments);
   const normalizedBasePath = path.resolve(basePath);
-  
+
   // Ensure the resulting path is within the base directory
   if (!fullPath.startsWith(normalizedBasePath)) {
     throw new Error('Invalid file path: directory traversal detected');
   }
-  
+
   return fullPath;
 };
 
@@ -79,7 +79,7 @@ export const writeFileContent = async (filePath, content) => {
     // Ensure directory exists
     const dirPath = path.dirname(filePath);
     await ensureDirectory(dirPath);
-    
+
     await fs.writeFile(filePath, content, 'utf8');
   } catch (error) {
     throw new Error(`Failed to write file: ${error.message}`);
@@ -120,11 +120,11 @@ export const listFiles = async (dirPath, options = {}) => {
     const { filesOnly = false, recursive = false } = options;
     const entries = await fs.readdir(dirPath, { withFileTypes: true });
     const files = [];
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
       const stats = await fs.stat(fullPath);
-      
+
       if (entry.isFile() || (!filesOnly && entry.isDirectory())) {
         files.push({
           name: entry.name,
@@ -137,14 +137,14 @@ export const listFiles = async (dirPath, options = {}) => {
           modifiedAt: stats.mtime.toISOString()
         });
       }
-      
+
       // Recursive listing for directories
       if (recursive && entry.isDirectory()) {
         const subFiles = await listFiles(fullPath, options);
         files.push(...subFiles);
       }
     }
-    
+
     return files;
   } catch (error) {
     throw new Error(`Failed to list files: ${error.message}`);
@@ -177,7 +177,7 @@ export const copyFile = async (sourcePath, destPath) => {
     // Ensure destination directory exists
     const destDir = path.dirname(destPath);
     await ensureDirectory(destDir);
-    
+
     await fs.copyFile(sourcePath, destPath);
   } catch (error) {
     throw new Error(`Failed to copy file: ${error.message}`);
@@ -192,7 +192,7 @@ export const moveFile = async (sourcePath, destPath) => {
     // Ensure destination directory exists
     const destDir = path.dirname(destPath);
     await ensureDirectory(destDir);
-    
+
     await fs.rename(sourcePath, destPath);
   } catch (error) {
     throw new Error(`Failed to move file: ${error.message}`);
@@ -233,11 +233,11 @@ export const getDirectorySize = async (dirPath) => {
   try {
     let totalSize = 0;
     const files = await listFiles(dirPath, { recursive: true, filesOnly: true });
-    
+
     for (const file of files) {
       totalSize += file.size;
     }
-    
+
     return totalSize;
   } catch (error) {
     throw new Error(`Failed to calculate directory size: ${error.message}`);
@@ -251,23 +251,23 @@ export const validateFilename = (filename) => {
   if (!filename || typeof filename !== 'string') {
     throw new Error('Filename is required and must be a string');
   }
-  
+
   // Check for directory traversal attempts
   if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
     throw new Error('Filename contains invalid characters');
   }
-  
+
   // Check for system files
   const systemFiles = ['.htaccess', '.env', 'web.config', 'package.json'];
   if (systemFiles.includes(filename.toLowerCase())) {
     throw new Error('Filename is reserved');
   }
-  
+
   // Check length
   if (filename.length > 255) {
     throw new Error('Filename is too long');
   }
-  
+
   return true;
 };
 
@@ -280,6 +280,6 @@ export const generateUniqueFilename = (originalName) => {
   const extension = path.extname(originalName);
   const nameWithoutExt = path.basename(originalName, extension);
   const sanitizedName = nameWithoutExt.replace(/[^\w\-_]/g, '_').toLowerCase();
-  
+
   return `${sanitizedName}-${timestamp}-${random}${extension}`;
 };

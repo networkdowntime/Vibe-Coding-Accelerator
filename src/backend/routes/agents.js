@@ -1,4 +1,5 @@
 import express from 'express';
+
 import agentsController from '../controllers/agentsController.js';
 
 const router = express.Router();

@@ -53,12 +53,12 @@ export const generateId = () => {
  */
 export const formatFileSize = (bytes) => {
   if (!bytes || bytes === 0) return '0 Bytes';
-  
+
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 };
 
 /**
@@ -87,7 +87,7 @@ export const getMimeType = (extension) => {
     '.gif': 'image/gif',
     '.svg': 'image/svg+xml'
   };
-  
+
   return mimeTypes[extension.toLowerCase()] || 'application/octet-stream';
 };
 
@@ -96,7 +96,7 @@ export const getMimeType = (extension) => {
  */
 export const getFileExtension = (filename) => {
   if (!filename || !filename.includes('.')) return '';
-  return '.' + filename.split('.').pop().toLowerCase();
+  return `.${filename.split('.').pop().toLowerCase()}`;
 };
 
 /**
@@ -108,7 +108,7 @@ export const generateUniqueFilename = (originalName) => {
   const extension = getFileExtension(originalName);
   const nameWithoutExt = originalName.replace(extension, '');
   const sanitizedName = sanitizeString(nameWithoutExt);
-  
+
   return `${sanitizedName}-${timestamp}-${random}${extension}`;
 };
 
@@ -192,7 +192,7 @@ export const getRelativeTime = (date) => {
   const now = new Date();
   const past = new Date(date);
   const diffInSeconds = Math.floor((now - past) / 1000);
-  
+
   if (diffInSeconds < 60) return 'just now';
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;

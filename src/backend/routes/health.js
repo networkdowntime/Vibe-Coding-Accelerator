@@ -1,4 +1,5 @@
 import express from 'express';
+
 import { createResponse } from '../utils/helpers.js';
 import { directoryExists, getDirectorySize } from '../utils/fileSystem.js';
 
@@ -12,7 +13,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const startTime = process.hrtime();
-    
+
     // Basic health check
     const health = {
       status: 'healthy',
@@ -29,7 +30,7 @@ router.get('/', async (req, res) => {
     try {
       const projectsPath = process.env.PROJECT_STORAGE_PATH || './projects';
       const aiAgentsPath = process.env.AI_AGENTS_STORAGE_PATH || './ai_agents';
-      
+
       health.storage = {
         projectsPath: {
           accessible: await directoryExists(projectsPath),
@@ -54,9 +55,9 @@ router.get('/', async (req, res) => {
     res.json(createResponse(health, 'Health check successful'));
   } catch (error) {
     res.status(500).json(createResponse(
-      null, 
-      'Health check failed', 
-      500, 
+      null,
+      'Health check failed',
+      500,
       { error: error.message }
     ));
   }
@@ -70,7 +71,7 @@ router.get('/', async (req, res) => {
 router.get('/detailed', async (req, res) => {
   try {
     const startTime = process.hrtime();
-    
+
     // Extended health information
     const health = {
       status: 'healthy',
@@ -78,7 +79,7 @@ router.get('/detailed', async (req, res) => {
       uptime: process.uptime(),
       version: process.env.npm_package_version || '1.0.0',
       environment: process.env.NODE_ENV || 'development',
-      
+
       // System information
       system: {
         nodeVersion: process.version,
@@ -87,21 +88,21 @@ router.get('/detailed', async (req, res) => {
         pid: process.pid,
         ppid: process.ppid
       },
-      
+
       // Memory information
       memory: {
         ...process.memoryUsage(),
         formatted: {
-          rss: (process.memoryUsage().rss / 1024 / 1024).toFixed(2) + ' MB',
-          heapTotal: (process.memoryUsage().heapTotal / 1024 / 1024).toFixed(2) + ' MB',
-          heapUsed: (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2) + ' MB',
-          external: (process.memoryUsage().external / 1024 / 1024).toFixed(2) + ' MB'
+          rss: `${(process.memoryUsage().rss / 1024 / 1024).toFixed(2)} MB`,
+          heapTotal: `${(process.memoryUsage().heapTotal / 1024 / 1024).toFixed(2)} MB`,
+          heapUsed: `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`,
+          external: `${(process.memoryUsage().external / 1024 / 1024).toFixed(2)} MB`
         }
       },
-      
+
       // CPU information
       cpu: process.cpuUsage(),
-      
+
       // Environment variables (non-sensitive)
       config: {
         port: process.env.PORT || 3001,
@@ -115,7 +116,7 @@ router.get('/detailed', async (req, res) => {
     try {
       const projectsPath = process.env.PROJECT_STORAGE_PATH || './projects';
       const aiAgentsPath = process.env.AI_AGENTS_STORAGE_PATH || './ai_agents';
-      
+
       health.storage = {
         projectsPath: {
           accessible: await directoryExists(projectsPath),
@@ -142,9 +143,9 @@ router.get('/detailed', async (req, res) => {
     res.json(createResponse(health, 'Detailed health check successful'));
   } catch (error) {
     res.status(500).json(createResponse(
-      null, 
-      'Detailed health check failed', 
-      500, 
+      null,
+      'Detailed health check failed',
+      500,
       { error: error.message }
     ));
   }
@@ -160,10 +161,10 @@ router.get('/readiness', async (req, res) => {
     // Check if the application is ready to serve requests
     const projectsPath = process.env.PROJECT_STORAGE_PATH || './projects';
     const aiAgentsPath = process.env.AI_AGENTS_STORAGE_PATH || './ai_agents';
-    
+
     const projectsAccessible = await directoryExists(projectsPath);
     const aiAgentsAccessible = await directoryExists(aiAgentsPath);
-    
+
     if (projectsAccessible && aiAgentsAccessible) {
       res.json(createResponse({ ready: true }, 'Application is ready'));
     } else {

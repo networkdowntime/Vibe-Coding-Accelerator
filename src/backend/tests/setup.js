@@ -9,7 +9,7 @@ global.console = {
   debug: process.env.NODE_ENV === 'test-verbose' ? console.debug : jest.fn(),
   info: process.env.NODE_ENV === 'test-verbose' ? console.info : jest.fn(),
   warn: process.env.NODE_ENV === 'test-verbose' ? console.warn : jest.fn(),
-  error: process.env.NODE_ENV === 'test-verbose' ? console.error : jest.fn(),
+  error: process.env.NODE_ENV === 'test-verbose' ? console.error : jest.fn()
 };
 
 // Set test environment variables

@@ -1,8 +1,9 @@
-import request from 'supertest';
-import express from 'express';
 import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
+
+import express from 'express';
+import request from 'supertest';
 import { jest, describe, beforeEach, afterEach, test, expect } from '@jest/globals';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +28,7 @@ beforeEach(() => {
   app = express();
   app.use(express.json());
   app.use('/api/v1/settings', settingsRoutes.default);
-  
+
   // Reset mocks before each test
   jest.clearAllMocks();
 });
@@ -35,12 +36,12 @@ beforeEach(() => {
 describe('Settings API', () => {
   const testEnvPath = path.join(__dirname, '../../.env.test');
   let originalEnvPath;
-  
+
   beforeEach(async () => {
     // Store original env path and set test env path
     originalEnvPath = settingsController.default.envPath;
     settingsController.default.envPath = testEnvPath;
-    
+
     // Clean up test .env file before each test
     try {
       await fs.unlink(testEnvPath);
@@ -52,7 +53,7 @@ describe('Settings API', () => {
   afterEach(async () => {
     // Restore original env path
     settingsController.default.envPath = originalEnvPath;
-    
+
     // Clean up test .env file after each test
     try {
       await fs.unlink(testEnvPath);
@@ -177,10 +178,10 @@ describe('Settings API', () => {
     it('should return success when LLM connection test passes', async () => {
       axios.post.mockResolvedValueOnce({
         status: 200,
-        data: { 
+        data: {
           model: 'gpt-3.5-turbo',
           usage: { total_tokens: 10 },
-          choices: [{ message: { content: 'OK' } }] 
+          choices: [{ message: { content: 'OK' } }]
         }
       });
 
@@ -239,8 +240,8 @@ describe('Settings API', () => {
 
     it('should return error when LLM API returns unauthorized', async () => {
       const authError = new Error('Request failed with status code 401');
-      authError.response = { 
-        status: 401, 
+      authError.response = {
+        status: 401,
         data: { error: { message: 'Invalid API key' } },
         statusText: 'Unauthorized'
       };

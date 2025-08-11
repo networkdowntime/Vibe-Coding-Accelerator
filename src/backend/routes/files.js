@@ -1,5 +1,6 @@
 import express from 'express';
-import { 
+
+import {
   getProjectFiles,
   getFileById,
   getFileContent,
@@ -8,7 +9,7 @@ import {
   downloadFile,
   uploadMiddleware
 } from '../controllers/filesController.js';
-import { 
+import {
   validateProjectId,
   validateFileId,
   validateFileUpload

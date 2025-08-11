@@ -27,7 +27,7 @@ export const requestLogger = (req, res, next) => {
   res.end = function(chunk, encoding) {
     const duration = Date.now() - startTime;
     const responseTimestamp = new Date().toISOString();
-    
+
     console.log(`📤 [${responseTimestamp}] ${req.method} ${req.originalUrl} - ${res.statusCode}`, {
       duration: `${duration}ms`,
       contentLength: res.get('Content-Length'),
@@ -50,9 +50,9 @@ export const responseTime = (req, res, next) => {
   res.on('finish', () => {
     const endTime = process.hrtime.bigint();
     const duration = Number(endTime - startTime) / 1000000; // Convert to milliseconds
-    
+
     res.set('X-Response-Time', `${duration.toFixed(2)}ms`);
-    
+
     // Log slow requests (> 1000ms)
     if (duration > 1000) {
       console.warn(`🐌 Slow request detected: ${req.method} ${req.originalUrl} took ${duration.toFixed(2)}ms`);
@@ -76,6 +76,6 @@ export const requestId = (req, res, next) => {
  * Generate a unique request ID
  */
 function generateRequestId() {
-  return Math.random().toString(36).substring(2, 15) + 
+  return Math.random().toString(36).substring(2, 15) +
          Math.random().toString(36).substring(2, 15);
 }

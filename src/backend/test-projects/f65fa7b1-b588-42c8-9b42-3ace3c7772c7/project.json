@@ -1,0 +1,15 @@
+{
+  "id": "f65fa7b1-b588-42c8-9b42-3ace3c7772c7",
+  "name": "Path Traversal Test Project",
+  "description": "",
+  "status": "draft",
+  "tags": [],
+  "createdAt": "2025-08-09T18:21:41.758Z",
+  "updatedAt": "2025-08-09T18:21:41.758Z",
+  "createdBy": "system",
+  "settings": {
+    "autoAnalysis": true,
+    "aiModel": "default",
+    "outputFormat": "markdown"
+  }
+}

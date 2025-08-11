@@ -1,5 +1,7 @@
 import Joi from 'joi';
+
 import { createErrorResponse } from '../utils/helpers.js';
+
 import { AppError } from './errorHandler.js';
 
 /**
@@ -52,7 +54,8 @@ export const schemas = {
         .pattern(/^[a-zA-Z0-9\s\-_]+$/)
         .required()
         .messages({
-          'string.pattern.base': 'Project name can only contain letters, numbers, spaces, hyphens, and underscores'
+          'string.pattern.base':
+            'Project name can only contain letters, numbers, spaces, hyphens, and underscores'
         }),
       description: Joi.string()
         .max(500)
@@ -76,7 +79,8 @@ export const schemas = {
         .pattern(/^[a-zA-Z0-9\s\-_]+$/)
         .optional()
         .messages({
-          'string.pattern.base': 'Project name can only contain letters, numbers, spaces, hyphens, and underscores'
+          'string.pattern.base':
+            'Project name can only contain letters, numbers, spaces, hyphens, and underscores'
         }),
       description: Joi.string()
         .max(500)
@@ -207,6 +211,48 @@ export const schemas = {
         .default(20)
     }).optional(),
     body: Joi.object().optional()
+  }),
+
+  // Traceability validation schemas
+  consistencyCheck: Joi.object({
+    body: Joi.object({
+      projectId: Joi.string()
+        .required()
+        .messages({
+          'string.empty': 'Project ID is required'
+        }),
+      jobId: Joi.string()
+        .optional()
+    }).required(),
+    params: Joi.object().optional(),
+    query: Joi.object().optional()
+  }),
+
+  getTraceabilityReport: Joi.object({
+    params: Joi.object({
+      projectId: Joi.string()
+        .required()
+    }).required(),
+    body: Joi.object().optional(),
+    query: Joi.object().optional()
+  }),
+
+  generateTraceabilityReport: Joi.object({
+    params: Joi.object({
+      projectId: Joi.string()
+        .required()
+    }).required(),
+    body: Joi.object().optional(),
+    query: Joi.object().optional()
+  }),
+
+  consistencyCheckStatus: Joi.object({
+    params: Joi.object({
+      consistencyJobId: Joi.string()
+        .required()
+    }).required(),
+    body: Joi.object().optional(),
+    query: Joi.object().optional()
   })
 };
 
@@ -223,33 +269,33 @@ export const validateFile = (req, res, next) => {
 // Additional validation middleware for file operations
 export const validateProjectId = (req, res, next) => {
   const { projectId } = req.params;
-  
+
   if (!projectId) {
     return res.status(400).json(createErrorResponse('Project ID is required', 400));
   }
-  
+
   // Basic UUID format validation
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   if (!uuidRegex.test(projectId)) {
     return res.status(400).json(createErrorResponse('Invalid project ID format', 400));
   }
-  
+
   next();
 };
 
 export const validateFileId = (req, res, next) => {
   const { fileId } = req.params;
-  
+
   if (!fileId) {
     return res.status(400).json(createErrorResponse('File ID is required', 400));
   }
-  
+
   // Basic filename validation (alphanumeric, dots, dashes, underscores)
   const filenameRegex = /^[a-zA-Z0-9._-]+$/;
   if (!filenameRegex.test(fileId)) {
     return res.status(400).json(createErrorResponse('Invalid file ID format', 400));
   }
-  
+
   next();
 };
 
@@ -257,7 +303,7 @@ export const validateFileUpload = (req, res, next) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).json(createErrorResponse('No files uploaded', 400));
   }
-  
+
   // Additional file validation can be added here
   next();
 };

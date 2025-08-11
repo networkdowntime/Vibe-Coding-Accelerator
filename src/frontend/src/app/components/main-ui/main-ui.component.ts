@@ -203,6 +203,10 @@ import { SettingsComponent } from '../settings/settings.component';
                   <mat-icon>edit</mat-icon>
                   <span>Edit</span>
                 </button>
+                <button mat-menu-item (click)="viewTraceabilityReport(project)">
+                  <mat-icon>assessment</mat-icon>
+                  <span>Traceability Report</span>
+                </button>
                 <button mat-menu-item (click)="renameProject(project)">
                   <mat-icon>text_fields</mat-icon>
                   <span>Rename</span>
@@ -850,6 +854,13 @@ export class MainUiComponent implements OnInit, OnDestroy {
           });
       }
     });
+  }
+
+  /**
+   * View traceability report for a project
+   */
+  viewTraceabilityReport(project: Project): void {
+    this.router.navigate(['/project', project.id, 'traceability']);
   }
 
   /**

@@ -1,7 +1,9 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
 import axios from 'axios';
+
 import settingsController from './settingsController.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -13,7 +15,7 @@ class LLMController {
     this.processFiles = this.processFiles.bind(this);
     this.getProcessingStatus = this.getProcessingStatus.bind(this);
     this.cancelProcessing = this.cancelProcessing.bind(this);
-    
+
     // Store active processing sessions
     this.processingJobs = new Map();
   }
@@ -53,7 +55,7 @@ class LLMController {
 
       // Generate unique job ID
       const jobId = `${projectId}_${Date.now()}`;
-      
+
       // Create processing job
       const job = {
         id: jobId,
@@ -217,7 +219,7 @@ class LLMController {
 
     try {
       job.status = 'processing';
-      
+
       // Create export directory
       const exportDir = path.join(__dirname, '../../projects', job.projectId, 'output');
       await fs.mkdir(exportDir, { recursive: true });
@@ -229,7 +231,7 @@ class LLMController {
         }
 
         const fileId = job.fileIds[i];
-        
+
         try {
           // Read the file
           const filePath = path.join(__dirname, '../../projects', job.projectId, 'files', fileId);
@@ -261,7 +263,7 @@ class LLMController {
 
         } catch (error) {
           console.error(`Error processing file ${fileId}:`, error);
-          
+
           job.errors.push({
             fileId,
             fileName: fileId,
@@ -281,7 +283,7 @@ class LLMController {
         } else {
           job.status = 'completed_with_errors';
         }
-        
+
         job.endTime = new Date();
         job.progress = 100;
       }
@@ -300,10 +302,10 @@ class LLMController {
   async processFileWithLLM(fileContent, fileName, aiAgentConfig, settings) {
     // Detect if this is an Azure OpenAI endpoint or standard OpenAI
     const isAzureOpenAI = settings.LLM_ENDPOINT.includes('openai.azure.com');
-    
+
     // Create the prompt based on AI agent configuration
     const prompt = this.createPrompt(fileContent, fileName, aiAgentConfig);
-    
+
     let requestUrl;
     let headers;
     let requestBody;
@@ -395,7 +397,7 @@ Improved file content:`;
    */
   cleanupOldJobs() {
     const cutoffTime = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
-    
+
     for (const [jobId, job] of this.processingJobs.entries()) {
       if (job.endTime && job.endTime < cutoffTime) {
         this.processingJobs.delete(jobId);

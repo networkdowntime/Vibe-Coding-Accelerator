@@ -1,10 +1,11 @@
 import express from 'express';
-import { 
-  getAllProjects, 
-  getProjectById, 
-  createProject, 
-  updateProject, 
-  deleteProject 
+
+import {
+  getAllProjects,
+  getProjectById,
+  createProject,
+  updateProject,
+  deleteProject
 } from '../controllers/projectsController.js';
 import { validate, schemas } from '../middleware/validation.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
@@ -16,7 +17,7 @@ const router = express.Router();
  * @description Get all projects with pagination and filtering
  * @access Public
  */
-router.get('/', 
+router.get('/',
   validate(schemas.listProjects),
   asyncHandler(getAllProjects)
 );
@@ -26,7 +27,7 @@ router.get('/',
  * @description Get project by ID
  * @access Public
  */
-router.get('/:id', 
+router.get('/:id',
   validate(schemas.getProject),
   asyncHandler(getProjectById)
 );
@@ -36,7 +37,7 @@ router.get('/:id',
  * @description Create new project
  * @access Public
  */
-router.post('/', 
+router.post('/',
   validate(schemas.createProject),
   asyncHandler(createProject)
 );
@@ -46,7 +47,7 @@ router.post('/',
  * @description Update project by ID
  * @access Public
  */
-router.put('/:id', 
+router.put('/:id',
   validate(schemas.updateProject),
   asyncHandler(updateProject)
 );
@@ -56,7 +57,7 @@ router.put('/:id',
  * @description Delete project by ID
  * @access Public
  */
-router.delete('/:id', 
+router.delete('/:id',
   validate(schemas.deleteProject),
   asyncHandler(deleteProject)
 );

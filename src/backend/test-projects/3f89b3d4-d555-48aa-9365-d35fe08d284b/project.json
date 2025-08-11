@@ -1,0 +1,15 @@
+{
+  "id": "3f89b3d4-d555-48aa-9365-d35fe08d284b",
+  "name": "File Security Test Project",
+  "description": "",
+  "status": "draft",
+  "tags": [],
+  "createdAt": "2025-08-09T18:21:41.833Z",
+  "updatedAt": "2025-08-09T18:21:41.833Z",
+  "createdBy": "system",
+  "settings": {
+    "autoAnalysis": true,
+    "aiModel": "default",
+    "outputFormat": "markdown"
+  }
+}

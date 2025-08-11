@@ -1,11 +1,12 @@
-import multer from 'multer';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import { 
-  ensureDirectory, 
-  directoryExists, 
+
+import multer from 'multer';
+
+import {
+  ensureDirectory,
+  directoryExists,
   fileExists,
-  deleteFile, 
+  deleteFile,
   readFileContent,
   writeFileContent,
   listFiles,
@@ -13,12 +14,12 @@ import {
   validateFilename,
   generateUniqueFilename
 } from '../utils/fileSystem.js';
-import { 
-  createResponse, 
-  createErrorResponse, 
+import {
+  createResponse,
+  createErrorResponse,
   formatFileSize,
   getMimeType,
-  getFileExtension 
+  getFileExtension
 } from '../utils/helpers.js';
 import { AppError } from '../middleware/errorHandler.js';
 
@@ -57,17 +58,17 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     try {
       const allowedTypes = process.env.ALLOWED_FILE_TYPES?.split(',') || [
-        '.md', '.txt', '.json', '.js', '.ts', '.py', '.java', 
+        '.md', '.txt', '.json', '.js', '.ts', '.py', '.java',
         '.html', '.css', '.scss', '.xml', '.yml', '.yaml'
       ];
-      
-      const fileExtension = '.' + file.originalname.split('.').pop().toLowerCase();
-      
+
+      const fileExtension = `.${file.originalname.split('.').pop().toLowerCase()}`;
+
       if (allowedTypes.includes(fileExtension)) {
         cb(null, true);
       } else {
         cb(new AppError(
-          `File type ${fileExtension} not allowed. Allowed types: ${allowedTypes.join(', ')}`, 
+          `File type ${fileExtension} not allowed. Allowed types: ${allowedTypes.join(', ')}`,
           400
         ));
       }
@@ -84,26 +85,26 @@ export const getProjectFiles = async (req, res) => {
   try {
     const { projectId } = req.params;
     const { page = 1, limit = 20 } = req.query;
-    
+
     const projectPath = path.join(PROJECTS_BASE_PATH, projectId);
     const filesPath = path.join(projectPath, 'files');
-    
+
     // Check if project exists
     if (!(await directoryExists(projectPath))) {
       return res.status(404).json(createErrorResponse('Project not found', 404));
     }
-    
+
     // Ensure files directory exists
     await ensureDirectory(filesPath);
-    
+
     // Get all files
     const files = await listFiles(filesPath, { filesOnly: true });
-    
+
     // Transform file data
     const fileList = await Promise.all(files.map(async (file) => {
       const extension = getFileExtension(file.name);
       const mimeType = getMimeType(extension);
-      
+
       return {
         id: file.name, // Using filename as ID
         name: file.name,
@@ -118,12 +119,12 @@ export const getProjectFiles = async (req, res) => {
         path: file.relativePath
       };
     }));
-    
+
     // Apply pagination
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + parseInt(limit);
     const paginatedFiles = fileList.slice(startIndex, endIndex);
-    
+
     const pagination = {
       currentPage: parseInt(page),
       totalPages: Math.ceil(fileList.length / limit),
@@ -132,7 +133,7 @@ export const getProjectFiles = async (req, res) => {
       hasNextPage: endIndex < fileList.length,
       hasPrevPage: page > 1
     };
-    
+
     res.json(createResponse(
       paginatedFiles,
       'Files retrieved successfully',
@@ -151,24 +152,24 @@ export const getProjectFiles = async (req, res) => {
 export const getFileById = async (req, res) => {
   try {
     const { projectId, fileId } = req.params;
-    
+
     const projectPath = path.join(PROJECTS_BASE_PATH, projectId);
     const filePath = path.join(projectPath, 'files', fileId);
-    
+
     // Check if project exists
     if (!(await directoryExists(projectPath))) {
       return res.status(404).json(createErrorResponse('Project not found', 404));
     }
-    
+
     // Check if file exists
     if (!(await fileExists(filePath))) {
       return res.status(404).json(createErrorResponse('File not found', 404));
     }
-    
+
     const stats = await getFileStats(filePath);
     const extension = getFileExtension(fileId);
     const mimeType = getMimeType(extension);
-    
+
     const fileData = {
       id: fileId,
       name: fileId,
@@ -180,7 +181,7 @@ export const getFileById = async (req, res) => {
       modifiedDate: stats.modifiedAt,
       status: 'uploaded'
     };
-    
+
     res.json(createResponse(fileData, 'File retrieved successfully'));
   } catch (error) {
     console.error('Error getting file:', error);
@@ -194,31 +195,33 @@ export const getFileById = async (req, res) => {
 export const getFileContent = async (req, res) => {
   try {
     const { projectId, fileId } = req.params;
-    
+
     const projectPath = path.join(PROJECTS_BASE_PATH, projectId);
     const filePath = path.join(projectPath, 'files', fileId);
-    
+
     // Check if project exists
     if (!(await directoryExists(projectPath))) {
       return res.status(404).json(createErrorResponse('Project not found', 404));
     }
-    
+
     // Check if file exists
     if (!(await fileExists(filePath))) {
       return res.status(404).json(createErrorResponse('File not found', 404));
     }
-    
+
     const content = await readFileContent(filePath);
     const extension = getFileExtension(fileId);
     const mimeType = getMimeType(extension);
-    
+
     res.json(createResponse(
       { content, mimeType, encoding: 'utf8' },
       'File content retrieved successfully'
     ));
   } catch (error) {
     console.error('Error getting file content:', error);
-    res.status(500).json(createErrorResponse('Failed to retrieve file content', 500, error.message));
+    res.status(500).json(
+      createErrorResponse('Failed to retrieve file content', 500, error.message)
+    );
   }
 };
 
@@ -229,27 +232,27 @@ export const uploadFiles = async (req, res) => {
   try {
     const { projectId } = req.params;
     const { description = '' } = req.body;
-    
+
     const projectPath = path.join(PROJECTS_BASE_PATH, projectId);
-    
+
     // Check if project exists
     if (!(await directoryExists(projectPath))) {
       return res.status(404).json(createErrorResponse('Project not found', 404));
     }
-    
+
     // Check if files were uploaded
     if (!req.files || req.files.length === 0) {
       return res.status(400).json(createErrorResponse('No files uploaded', 400));
     }
-    
+
     // Process uploaded files
     const uploadedFiles = [];
-    
+
     for (const file of req.files) {
       const extension = getFileExtension(file.filename);
       const mimeType = getMimeType(extension);
       const stats = await getFileStats(file.path);
-      
+
       const fileData = {
         id: file.filename,
         name: file.filename,
@@ -263,13 +266,13 @@ export const uploadFiles = async (req, res) => {
         status: 'uploaded',
         description: description || ''
       };
-      
+
       uploadedFiles.push(fileData);
     }
-    
+
     // Update project metadata
     await updateProjectMetadata(projectId);
-    
+
     res.status(201).json(createResponse(
       uploadedFiles,
       `${uploadedFiles.length} file(s) uploaded successfully`,
@@ -287,26 +290,26 @@ export const uploadFiles = async (req, res) => {
 export const deleteFileById = async (req, res) => {
   try {
     const { projectId, fileId } = req.params;
-    
+
     const projectPath = path.join(PROJECTS_BASE_PATH, projectId);
     const filePath = path.join(projectPath, 'files', fileId);
-    
+
     // Check if project exists
     if (!(await directoryExists(projectPath))) {
       return res.status(404).json(createErrorResponse('Project not found', 404));
     }
-    
+
     // Check if file exists
     if (!(await fileExists(filePath))) {
       return res.status(404).json(createErrorResponse('File not found', 404));
     }
-    
+
     // Delete file
     await deleteFile(filePath);
-    
+
     // Update project metadata
     await updateProjectMetadata(projectId);
-    
+
     res.json(createResponse(null, 'File deleted successfully'));
   } catch (error) {
     console.error('Error deleting file:', error);
@@ -320,26 +323,26 @@ export const deleteFileById = async (req, res) => {
 export const downloadFile = async (req, res) => {
   try {
     const { projectId, fileId } = req.params;
-    
+
     const projectPath = path.join(PROJECTS_BASE_PATH, projectId);
     const filePath = path.join(projectPath, 'files', fileId);
-    
+
     // Check if project exists
     if (!(await directoryExists(projectPath))) {
       return res.status(404).json(createErrorResponse('Project not found', 404));
     }
-    
+
     // Check if file exists
     if (!(await fileExists(filePath))) {
       return res.status(404).json(createErrorResponse('File not found', 404));
     }
-    
+
     const extension = getFileExtension(fileId);
     const mimeType = getMimeType(extension);
-    
+
     res.setHeader('Content-Type', mimeType);
     res.setHeader('Content-Disposition', `attachment; filename="${fileId}"`);
-    
+
     res.sendFile(filePath);
   } catch (error) {
     console.error('Error downloading file:', error);
@@ -354,7 +357,7 @@ const updateProjectMetadata = async (projectId) => {
   try {
     const projectPath = path.join(PROJECTS_BASE_PATH, projectId);
     const projectJsonPath = path.join(projectPath, 'project.json');
-    
+
     if (await fileExists(projectJsonPath)) {
       const projectData = JSON.parse(await readFileContent(projectJsonPath));
       projectData.updatedAt = new Date().toISOString();

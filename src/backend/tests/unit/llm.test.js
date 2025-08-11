@@ -16,14 +16,14 @@ const app = (await import('../../server.js')).default;
 describe('LLM Processing API', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock successful LLM API responses
     mockAxios.post.mockResolvedValue({
       status: 200,
       data: {
         choices: [{
           message: {
-            content: "Processed content"
+            content: 'Processed content'
           }
         }],
         usage: {
@@ -201,10 +201,10 @@ describe('LLM Processing API', () => {
         .send(requestData);
 
       const newJobId = createResponse.body.jobId;
-      
+
       // Add a small delay to ensure the job is started but not completed
       await new Promise(resolve => setTimeout(resolve, 50));
-      
+
       const response = await request(app)
         .post(`/api/v1/llm/cancel/${newJobId}`)
         .expect(200);

@@ -1,0 +1,15 @@
+{
+  "id": "29aea601-9b41-4ad6-8271-6ffdd7f76a01",
+  "name": "Security Test Project",
+  "description": "",
+  "status": "draft",
+  "tags": [],
+  "createdAt": "2025-08-09T18:21:41.729Z",
+  "updatedAt": "2025-08-09T18:21:41.729Z",
+  "createdBy": "system",
+  "settings": {
+    "autoAnalysis": true,
+    "aiModel": "default",
+    "outputFormat": "markdown"
+  }
+}

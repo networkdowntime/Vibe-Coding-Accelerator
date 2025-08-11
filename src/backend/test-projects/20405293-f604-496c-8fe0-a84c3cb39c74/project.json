@@ -1,0 +1,15 @@
+{
+  "id": "20405293-f604-496c-8fe0-a84c3cb39c74",
+  "name": "File Size Test Project",
+  "description": "",
+  "status": "draft",
+  "tags": [],
+  "createdAt": "2025-08-09T18:21:41.844Z",
+  "updatedAt": "2025-08-09T18:21:41.844Z",
+  "createdBy": "system",
+  "settings": {
+    "autoAnalysis": true,
+    "aiModel": "default",
+    "outputFormat": "markdown"
+  }
+}
